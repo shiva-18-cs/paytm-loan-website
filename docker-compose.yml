@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  credence-portal:
+    build: .
+    container_name: credence_underwriting_engine
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - DB_PATH=/app/data/users.db
+      - N8N_WEBHOOK_URL=http://localhost:5678/webhook/Loan_Application
+    volumes:
+      - credence_data:/app/data
+
+volumes:
+  credence_data:

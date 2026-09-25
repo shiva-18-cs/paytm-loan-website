@@ -1,0 +1,4175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credence — Loan Approval Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,400;1,500;1,600&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #040806;             /* Deep forest black-green */
+    --accent-lime: #BFFF07;         /* Vibrant neon green-yellow */
+    --accent-lime-hover: #AEE000;
+    --accent-lime-glow: rgba(191, 255, 7, 0.15);
+    
+    --dash-bg: #FAFBF9;             /* Light green-tinted gray dashboard background */
+    --dash-card: #FFFFFF;           /* Pure white dashboard cards */
+    --dash-border: rgba(220, 224, 221, 0.6); /* Subtle green-gray borders */
+    
+    --text-dark-primary: #0C120F;   /* Dark text inside dashboard */
+    --text-dark-secondary: #3C4440;
+    --text-dark-muted: #6C7570;
+    
+    --text-light-primary: #FAFBF9;  /* Light text outside dashboard */
+    --text-light-muted: #8A9590;
+    
+    --font-body: 'Outfit', sans-serif;
+    --font-serif: 'Lora', serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.02);
+    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.08);
+    
+    --emerald: #10B981;
+    --emerald-glow: rgba(16, 185, 129, 0.12);
+    --amber: #F59E0B;
+    --amber-glow: rgba(245, 158, 11, 0.12);
+    --red: #EF4444;
+    --red-glow: rgba(239, 68, 68, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--bg-dark);
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(191, 255, 7, 0.09), transparent 45%),
+      radial-gradient(circle at 90% 80%, rgba(191, 255, 7, 0.06), transparent 50%);
+    color: var(--text-light-primary);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ===== Announcement Bar ===== */
+  .announcement-bar {
+    background-color: var(--accent-lime);
+    color: var(--bg-dark);
+    padding: 8px 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    z-index: 100;
+  }
+  .announcement-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .announcement-close {
+    position: absolute;
+    right: 24px;
+    background: transparent;
+    border: none;
+    color: var(--bg-dark);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+  .announcement-close:hover {
+    opacity: 1;
+  }
+
+  /* ===== Topbar ===== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(4, 8, 6, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-mark {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    background: var(--accent-lime);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(191, 255, 7, 0.3);
+  }
+  .brand-mark svg { 
+    width: 20px; height: 20px; 
+    color: var(--bg-dark);
+  }
+  .brand-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-light-primary);
+    letter-spacing: -0.03em;
+  }
+  .brand-tag {
+    font-size: 9.5px;
+    color: var(--text-light-muted);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+  
+  .header-nav {
+    display: flex;
+    gap: 28px;
+  }
+  @media (max-width: 900px) {
+    .header-nav { display: none; }
+  }
+  .nav-link {
+    color: var(--text-light-muted);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  .nav-link:hover {
+    color: var(--accent-lime);
+  }
+  
+  .lang-switcher {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+  }
+  
+  .lang-btn {
+    padding: 5px 12px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: var(--text-light-muted);
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .lang-btn:hover {
+    color: var(--text-light-primary);
+  }
+  .lang-btn.active {
+    background: var(--accent-lime);
+    color: var(--bg-dark);
+  }
+
+  .topbar-meta {
+    font-size: 12.5px;
+    color: var(--text-light-muted);
+    font-family: var(--font-mono);
+  }
+  .topbar-meta .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #10B981;
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: 0 0 8px #10B981;
+    animation: pulseGlow 2s infinite;
+  }
+
+  @keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  }
+
+  /* ===== Hero Section ===== */
+  .hero-section {
+    text-align: center;
+    padding: 60px 24px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .hero-badge {
+    background: rgba(191, 255, 7, 0.08);
+    border: 1px solid rgba(191, 255, 7, 0.2);
+    color: var(--accent-lime);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+  
+  .hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text-light-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  
+  .hero-title em,
+  .hero-title span.serif-italic {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent-lime);
+  }
+  
+  .hero-subtext {
+    font-size: 16px;
+    color: var(--text-light-muted);
+    line-height: 1.6;
+    max-width: 60ch;
+    margin: 0 auto;
+  }
+
+  /* ===== Dashboard Card Layout ===== */
+  .dashboard-card {
+    display: flex;
+    max-width: 1280px;
+    margin: 40px auto 80px;
+    background: var(--dash-bg);
+    border: 1px solid var(--dash-border);
+    border-radius: 24px;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    color: var(--text-dark-primary);
+  }
+  
+  @media (max-width: 1024px) {
+    .dashboard-card {
+      flex-direction: column;
+      margin: 20px 16px 40px;
+      border-radius: 16px;
+    }
+  }
+  
+  /* Sidebar */
+  .dashboard-sidebar {
+    width: 80px;
+    background: #0C120F; /* Sleek dark sidebar from reference */
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0;
+    flex-shrink: 0;
+  }
+  
+  @media (max-width: 1024px) {
+    .dashboard-sidebar {
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 12px 24px;
+      border-right: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+  }
+  
+  .sidebar-logo {
+    width: 42px;
+    height: 42px;
+    background: rgba(191, 255, 7, 0.1);
+    border: 1px solid rgba(191, 255, 7, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+  
+  @media (max-width: 1024px) {
+    .sidebar-logo { margin-bottom: 0; }
+  }
+  
+  .sidebar-logo svg {
+    width: 24px;
+    height: 24px;
+    color: var(--accent-lime);
+  }
+  
+  .sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    align-items: center;
+  }
+  
+  @media (max-width: 1024px) {
+    .sidebar-menu {
+      flex-direction: row;
+      width: auto;
+      gap: 12px;
+    }
+  }
+  
+  .sidebar-menu .tab-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-light-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .sidebar-menu .tab-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-light-primary);
+  }
+  
+  .sidebar-menu .tab-btn.active {
+    background: var(--accent-lime);
+    color: var(--bg-dark);
+    box-shadow: 0 0 15px var(--accent-lime-glow);
+  }
+  
+  .sidebar-menu .tab-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Dashboard Body */
+  .dashboard-body {
+    flex-grow: 1;
+    padding: 36px 40px;
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-body {
+      padding: 24px 20px;
+    }
+  }
+  
+  /* Dashboard Header */
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--dash-border);
+    padding-bottom: 20px;
+  }
+  
+  .dashboard-title-area h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-dark-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 2px;
+  }
+  
+  .dashboard-title-area p {
+    font-size: 13.5px;
+    color: var(--text-dark-muted);
+  }
+  
+  .dashboard-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #E4E7E5;
+    overflow: hidden;
+    border: 1px solid var(--dash-border);
+  }
+  
+  .profile-info {
+    text-align: right;
+  }
+  
+  .profile-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-dark-primary);
+  }
+  
+  .profile-role {
+    font-size: 11px;
+    color: var(--text-dark-muted);
+  }
+
+  /* ===== Metrics Cards ===== */
+  .dashboard-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+  
+  @media (max-width: 900px) {
+    .dashboard-metrics {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 480px) {
+    .dashboard-metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .metric-card {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .metric-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .metric-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  
+  .metric-icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .metric-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark-primary);
+    letter-spacing: -0.02em;
+    font-family: var(--font-mono);
+  }
+  
+  .metric-subtext {
+    font-size: 11px;
+    color: var(--text-dark-muted);
+  }
+
+  /* ===== Dashboard Grid Layout ===== */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 36px;
+  }
+  
+  @media (max-width: 1024px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ===== Input fields & form groups ===== */
+  .field-group {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .section-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark-primary);
+    border-bottom: 1px solid var(--dash-border);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .section-label .count {
+    font-family: var(--font-mono);
+    color: var(--text-dark-muted);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 580px) {
+    .grid-2 { grid-template-columns: 1fr; gap: 0; }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  
+  .field label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-dark-secondary);
+  }
+  
+  .field label .hint {
+    font-size: 11px;
+    color: var(--text-dark-muted);
+    font-weight: 400;
+  }
+
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="email"],
+  .field input[type="tel"],
+  .field select {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--dash-border);
+    background: #FFFFFF;
+    color: var(--text-dark-primary);
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+  
+  .field input::placeholder {
+    color: #A3ACA8;
+  }
+  
+  .field input:focus,
+  .field select:focus {
+    border-color: var(--text-dark-primary);
+    box-shadow: 0 0 0 3px rgba(12, 18, 15, 0.05);
+  }
+
+  /* Prefix & Suffix input wraps */
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .input-wrap.has-prefix input {
+    padding-left: 28px;
+  }
+  .input-wrap .prefix {
+    position: absolute;
+    left: 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-dark-muted);
+    font-family: var(--font-mono);
+  }
+  .input-wrap .suffix {
+    position: absolute;
+    right: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-dark-muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  /* Segmented controls (Radios) */
+  .segmented {
+    display: flex;
+    background: #EAECEB;
+    padding: 3px;
+    border-radius: 10px;
+    border: 1px solid var(--dash-border);
+    width: fit-content;
+  }
+  .segmented input[type="radio"] {
+    display: none;
+  }
+  .segmented label {
+    padding: 8px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-dark-muted);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 0;
+  }
+  .segmented input[type="radio"]:checked + label {
+    background: #FFFFFF;
+    color: var(--text-dark-primary);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Validation status */
+  .field.valid input,
+  .field.valid select {
+    border-color: #A7F3D0;
+    background: #F0FDF4;
+  }
+  .field.error input,
+  .field.error select {
+    border-color: #FCA5A5;
+    background: #FEF2F2;
+  }
+  .field-error-msg {
+    color: #EF4444;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 4px;
+    display: none;
+  }
+  .field.error .field-error-msg {
+    display: block;
+  }
+
+  /* Live computed indicators box */
+  .live-metrics-box {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: rgba(12, 18, 15, 0.02);
+    border: 1px solid var(--dash-border);
+  }
+  
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  
+  .primary-btn {
+    flex-grow: 2;
+    background: #0C120F;
+    color: #FFFFFF;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(12, 18, 15, 0.15);
+  }
+  
+  .primary-btn:hover {
+    background: #1C2320;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(12, 18, 15, 0.2);
+  }
+  
+  .primary-btn svg.arrow {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+  }
+  .primary-btn:hover svg.arrow {
+    transform: translate(2px, -2px);
+  }
+  
+  .reset-btn {
+    flex-grow: 1;
+    background: transparent;
+    border: 1px solid var(--dash-border);
+    color: var(--text-dark-secondary);
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .reset-btn:hover {
+    background: #EAECEB;
+    color: var(--text-dark-primary);
+  }
+
+  .privacy-text {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--text-dark-muted);
+    line-height: 1.6;
+    margin-top: 20px;
+    padding: 0 10px;
+  }
+
+  /* ===== Voice Assistant wizard panel ===== */
+  .voice-wizard-card {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+  }
+  
+  .voice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--dash-border);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .voice-header-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark-primary);
+  }
+  
+  .voice-progress-text {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-dark-muted);
+  }
+  
+  .voice-progress-track {
+    height: 4px;
+    background: #EAECEB;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .voice-progress-fill {
+    height: 100%;
+    background: #0C120F;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .voice-question-box {
+    text-align: center;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px;
+    margin-bottom: 20px;
+  }
+  
+  .voice-question {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark-primary);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+  }
+
+  .voice-speak-icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dark-muted);
+    cursor: pointer;
+    margin-left: 8px;
+    transition: color 0.2s ease;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .voice-speak-icon-btn:hover {
+    color: var(--text-dark-primary);
+  }
+
+  /* Micro control buttons */
+  .voice-mic-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 24px 0;
+  }
+  
+  .mic-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 1px solid var(--dash-border);
+    background: #FFFFFF;
+    color: #0C120F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+  }
+  .mic-btn:hover {
+    transform: scale(1.05);
+    border-color: #0C120F;
+  }
+  
+  .mic-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .mic-label-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark-muted);
+  }
+
+  /* pulsating sound waves for speech recognition */
+  .speech-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 20px;
+    margin-bottom: 12px;
+  }
+  .speech-bar {
+    width: 3px;
+    height: 4px;
+    background: #EF4444;
+    border-radius: 99px;
+    animation: bounceSpeech 0.8s ease-in-out infinite alternate;
+  }
+  .speech-bar:nth-child(2) { animation-delay: 0.15s; }
+  .speech-bar:nth-child(3) { animation-delay: 0.3s; }
+  .speech-bar:nth-child(4) { animation-delay: 0.45s; }
+  .speech-bar:nth-child(5) { animation-delay: 0.6s; }
+  
+  @keyframes bounceSpeech {
+    0% { height: 4px; }
+    100% { height: 20px; }
+  }
+
+  .transcription-preview {
+    font-size: 13px;
+    font-style: italic;
+    color: #EF4444;
+    background: #FEF2F2;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #FEE2E2;
+    margin-bottom: 20px;
+    max-width: 80%;
+    text-align: center;
+  }
+
+  /* Summary answers so far (tag cloud) */
+  .voice-summary-panel {
+    background: rgba(12, 18, 15, 0.02);
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 24px;
+  }
+  .voice-summary-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-dark-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .voice-tags-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* ===== Evaluation & Analytics (Right side) ===== */
+  /* Gauge */
+  .gauge-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0 16px;
+  }
+  .gauge-svg {
+    width: 200px;
+    height: 115px;
+  }
+  .gauge-track {
+    fill: none;
+    stroke: #EAECEB;
+    stroke-width: 10;
+    stroke-linecap: round;
+  }
+  .gauge-fill {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dasharray: 251.2;
+    stroke-dashoffset: 251.2;
+    transition: stroke-dashoffset 0.8s cubic-bezier(.4,0,.2,1), stroke 0.4s ease;
+  }
+  .gauge-readout {
+    text-align: center;
+    margin-top: -42px;
+  }
+  .gauge-score {
+    font-family: var(--font-mono);
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    transition: color 0.4s ease;
+  }
+  .gauge-label {
+    font-size: 11px;
+    color: var(--text-dark-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+    font-weight: 600;
+  }
+
+  .completeness-bar-wrap {
+    margin-top: 16px;
+  }
+  .completeness-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--text-dark-muted);
+    margin-bottom: 6px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+  .completeness-track {
+    height: 6px;
+    background: #EAECEB;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .completeness-fill {
+    height: 100%;
+    background: #0C120F;
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Checklist items (Signals) */
+  .signal-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .signal-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-dark-secondary);
+    opacity: 0.35;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background: transparent;
+  }
+  .signal-item.active {
+    opacity: 1;
+    background: var(--dash-card);
+    border-color: var(--dash-border);
+  }
+  .signal-icon {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: #EAECEB;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    color: var(--text-dark-muted);
+  }
+  .signal-item.active .signal-icon {
+    background: var(--emerald-glow);
+    color: var(--emerald);
+  }
+  .signal-item.warn.active .signal-icon {
+    background: var(--amber-glow);
+    color: var(--amber);
+  }
+  .signal-icon svg { width: 11px; height: 11px; }
+  .signal-text strong { color: var(--text-dark-primary); font-weight: 600; }
+  .signal-value {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dark-muted);
+    margin-top: 1px;
+  }
+
+  /* Result Card styling */
+  .result-card {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    display: none;
+    box-shadow: var(--shadow-md);
+  }
+  .result-card.approved-state {
+    border-left: 5px solid var(--emerald);
+  }
+  .result-card.declined-state {
+    border-left: 5px solid var(--red);
+  }
+  .result-card.show {
+    display: block;
+    animation: resultIn .4s cubic-bezier(.16,1,.3,1);
+  }
+  @keyframes resultIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .result-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .result-status .badge-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .result-sub {
+    font-size: 13px;
+    color: var(--text-dark-secondary);
+    line-height: 1.55;
+  }
+  .result-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .result-actions button {
+    flex: 1;
+    padding: 11px;
+    border-radius: 10px;
+    border: 1px solid var(--dash-border);
+    background: transparent;
+    color: var(--text-dark-primary);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .result-actions button:hover {
+    background: #EAECEB;
+  }
+  .result-actions button.new-app-btn {
+    background: #0C120F;
+    color: #FFFFFF;
+    border: none;
+  }
+  .result-actions button.new-app-btn:hover {
+    background: #1C2320;
+  }
+
+  /* Explainability card */
+  .explain-panel {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    animation: resultIn .4s cubic-bezier(.16,1,.3,1);
+  }
+  
+  .explain-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark-primary);
+    margin-bottom: 2px;
+  }
+  .explain-sub {
+    font-size: 12px;
+    color: var(--text-dark-muted);
+    margin-bottom: 20px;
+  }
+
+  .explain-card {
+    background: rgba(12, 18, 15, 0.02);
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .cf-card {
+    background: rgba(12, 18, 15, 0.02);
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .panel-footer-note {
+    font-size: 11.5px;
+    color: var(--text-dark-muted);
+    line-height: 1.6;
+    margin-top: 24px;
+    border-top: 1px solid var(--dash-border);
+    padding-top: 16px;
+  }
+
+  /* Toast notification */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #0C120F;
+    color: #FFFFFF;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    opacity: 0;
+    pointer-events: none;
+    transition: all .25s ease;
+    z-index: 200;
+    max-width: 90vw;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.error {
+    background: #EF4444;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .btn-spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  button.primary-btn.loading .btn-spinner { display: inline-block; }
+  button.primary-btn.loading .btn-text, button.primary-btn.loading svg.arrow { display: none; }
+
+  /* ===== Login Portal Overlay ===== */
+  .login-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--bg-dark);
+    background-image: 
+      radial-gradient(circle at 30% 30%, rgba(191, 255, 7, 0.12), transparent 50%),
+      radial-gradient(circle at 70% 70%, rgba(191, 255, 7, 0.08), transparent 50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 24px;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+  
+  .login-card {
+    background: var(--dash-bg);
+    border: 1px solid var(--dash-border);
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
+    color: var(--text-dark-primary);
+    animation: resultIn 0.5s cubic-bezier(.16,1,.3,1);
+  }
+  
+  .login-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 32px;
+    color: var(--text-dark-primary);
+  }
+  
+  .login-logo svg {
+    width: 28px;
+    height: 28px;
+    color: #0C120F;
+    background: var(--accent-lime);
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: 0 0 10px rgba(191, 255, 7, 0.3);
+  }
+  
+  .login-logo span {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  
+  .login-title-area {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  
+  .login-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+  
+  .login-title em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    color: #059669;
+  }
+  
+  .login-subtitle {
+    font-size: 13px;
+    color: var(--text-dark-muted);
+    line-height: 1.5;
+  }
+  
+  /* Slide down fields for registration */
+  .login-register-fields {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, margin-top 0.4s ease;
+    opacity: 0;
+    margin-top: 0;
+  }
+  
+  .login-register-fields.show {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 16px;
+  }
+  
+  #logoutBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-light-muted);
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  #logoutBtn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #EF4444;
+  }
+
+  /* ===== Next-Gen Feature Styles: Simulator & Amortization ===== */
+  .sim-card {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .sim-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark-primary);
+    margin-bottom: 4px;
+  }
+  .sim-subtitle {
+    font-size: 12.5px;
+    color: var(--text-dark-muted);
+    margin-bottom: 20px;
+  }
+  .sim-slider-row {
+    margin-bottom: 18px;
+  }
+  .sim-slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .sim-slider-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark-secondary);
+  }
+  .sim-slider-val {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark-primary);
+    background: rgba(191, 255, 7, 0.2);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  .sim-range {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #E2E8F0;
+    outline: none;
+    -webkit-appearance: none;
+    accent-color: #0C120F;
+  }
+  .term-btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .term-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--dash-border);
+    background: #FFFFFF;
+    color: var(--text-dark-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .term-btn.active {
+    background: #0C120F;
+    color: var(--accent-lime);
+    border-color: #0C120F;
+  }
+  .sim-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .sim-kpi-box {
+    background: #F8FAFC;
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .sim-kpi-lbl {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dark-muted);
+  }
+  .sim-kpi-val {
+    font-size: 19px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--text-dark-primary);
+    margin-top: 4px;
+  }
+  .health-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 6px;
+  }
+  .health-pill.emerald { background: rgba(16, 185, 129, 0.15); color: #059669; }
+  .health-pill.amber { background: rgba(245, 158, 11, 0.15); color: #D97706; }
+  .health-pill.rose { background: rgba(239, 68, 68, 0.15); color: #DC2626; }
+  .amort-table-box {
+    margin-top: 16px;
+    border: 1px solid var(--dash-border);
+    border-radius: 10px;
+    overflow-x: auto;
+    max-height: 240px;
+  }
+  .amort-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+    text-align: left;
+  }
+  .amort-table th {
+    background: #F1F5F9;
+    padding: 8px 12px;
+    font-weight: 700;
+    color: var(--text-dark-secondary);
+    position: sticky;
+    top: 0;
+  }
+  .amort-table td {
+    padding: 7px 12px;
+    border-top: 1px solid #E2E8F0;
+    font-family: var(--font-mono);
+    color: var(--text-dark-secondary);
+  }
+
+  /* ===== Audit Trail & Decision Logs ===== */
+  .audit-card {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .audit-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .audit-search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 9px 14px;
+    border-radius: 9px;
+    border: 1px solid var(--dash-border);
+    background: #F8FAFC;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-dark-primary);
+    outline: none;
+  }
+  .audit-search-input:focus {
+    border-color: #0C120F;
+    background: #FFFFFF;
+  }
+  .audit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: 9px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--dash-border);
+    background: #FFFFFF;
+    color: var(--text-dark-primary);
+    transition: all 0.2s ease;
+  }
+  .audit-btn:hover {
+    background: #F1F5F9;
+  }
+  .audit-btn.primary {
+    background: #0C120F;
+    color: var(--accent-lime);
+    border-color: #0C120F;
+  }
+  .audit-btn.primary:hover {
+    background: #1A221E;
+  }
+  .audit-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--dash-border);
+    border-radius: 10px;
+  }
+  .audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .audit-table th {
+    background: #F8FAFC;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--text-dark-secondary);
+    border-bottom: 1px solid var(--dash-border);
+  }
+  .audit-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #EDF2F7;
+    color: var(--text-dark-secondary);
+  }
+  .audit-table tr:hover {
+    background: #F8FAFC;
+  }
+  .badge-appr {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .badge-decl {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(239, 68, 68, 0.12);
+    color: #DC2626;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
+  /* ===== Underwriting Memo & Counter-Offer ===== */
+  .memo-box {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    background: #F8FAFC;
+    border: 1px solid var(--dash-border);
+    font-size: 12.5px;
+  }
+  .memo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #E2E8F0;
+    padding-bottom: 8px;
+  }
+  .memo-badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    background: #0C120F;
+    color: var(--accent-lime);
+  }
+  .counter-offer-card {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 10px;
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px dashed rgba(16, 185, 129, 0.4);
+  }
+  .counter-offer-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #065F46;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  /* ===== Print / PDF Styles ===== */
+  @media print {
+    body {
+      background: #FFFFFF !important;
+      color: #000000 !important;
+    }
+    .topbar, .announcement-bar, .hero-section, .dashboard-sidebar,
+    .btn-row, .result-actions, .audit-toolbar, .lang-switcher, #logoutBtn {
+      display: none !important;
+    }
+    .dashboard-card {
+      box-shadow: none !important;
+      border: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
+    .print-only-header {
+      display: block !important;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 10px;
+    }
+  }
+  .print-only-header {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- Login / Registration Overlay -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z" fill="currentColor"/></svg>
+      <span>Credence</span>
+    </div>
+    
+    <div class="login-title-area">
+      <h1 class="login-title">Welcome to the <em>underwriting portal</em></h1>
+      <p class="login-subtitle">Enter your mobile number to access your account or create a new profile.</p>
+    </div>
+    
+    <form id="loginFormPortal" novalidate>
+      <div class="field" id="loginMobileField">
+        <label for="login_phone">Mobile Number</label>
+        <input type="tel" id="login_phone" placeholder="e.g. 9876543210" required autocomplete="tel">
+        <div class="field-error-msg" id="login_phone_error">Please enter a valid mobile number.</div>
+      </div>
+      
+      <!-- New Profile Fields (shown via slide-down transition) -->
+      <div class="login-register-fields" id="loginRegisterFields">
+        <div class="field">
+          <label for="login_name">Full Name</label>
+          <input type="text" id="login_name" placeholder="e.g. Asha Mehta" required autocomplete="name">
+          <div class="field-error-msg" id="login_name_error">Please enter your full name.</div>
+        </div>
+        <div class="field">
+          <label for="login_birthdate">Date of Birth</label>
+          <input type="date" id="login_birthdate" required>
+          <div class="field-error-msg" id="login_birthdate_error">Please enter your date of birth.</div>
+        </div>
+        <div class="field">
+          <label for="login_email">Gmail Address</label>
+          <input type="email" id="login_email" placeholder="e.g. asha.mehta@gmail.com" required autocomplete="email">
+          <div class="field-error-msg" id="login_email_error">Please enter a valid Gmail / email address.</div>
+        </div>
+      </div>
+      
+      <button type="submit" class="primary-btn" id="loginSubmitBtn" style="width: 100%; margin-top: 16px;">
+        <span class="btn-spinner" id="loginSpinner"></span>
+        <span class="btn-text" id="loginBtnText">Continue</span>
+        <svg class="arrow" viewBox="0 0 16 16" fill="none" style="width: 14px; height: 14px; stroke: currentColor; stroke-width: 2;"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+
+<!-- Announcement Bar -->
+<div class="announcement-bar" id="announcementBar">
+  <div class="announcement-content">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    <span>क्रेडेंस लोन पोर्टल &bull; Credence Underwriting Operating System &bull; क्रेडेंस लोन पोर्टल</span>
+  </div>
+  <button type="button" class="announcement-close" onclick="document.getElementById('announcementBar').style.display='none'">×</button>
+</div>
+
+<!-- Header / Topbar -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z" fill="currentColor"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">Credence</div>
+      <div class="brand-tag" data-i18n="brandTag">Loan Portal</div>
+    </div>
+  </div>
+  
+  <div class="header-nav">
+    <a href="javascript:void(0)" class="nav-link" id="navUnderwriting">Underwriting</a>
+    <a href="javascript:void(0)" class="nav-link" id="navSimulator">Loan Simulator</a>
+    <a href="javascript:void(0)" class="nav-link" id="navAudit">Audit History</a>
+    <a href="/api/applications/export/csv" class="nav-link" id="navExport" target="_blank" title="Export applications to CSV">Export CSV</a>
+  </div>
+  
+  <div style="display:flex;align-items:center;gap:20px;">
+
+    <div class="lang-switcher">
+      <button type="button" class="lang-btn active" data-lang="en">EN</button>
+      <button type="button" class="lang-btn" data-lang="hi">हिं</button>
+      <button type="button" class="lang-btn" data-lang="mr">मरा</button>
+    </div>
+    
+    <!-- Logout Button -->
+    <button type="button" id="logoutBtn" style="display: none;" title="Log Out / Switch Profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px; stroke-linecap: round; stroke-linejoin: round;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span>LOGOUT</span>
+    </button>
+
+    <div class="topbar-meta">
+      <span><span class="dot"></span><span data-i18n="statusOnline">Online · v1.0</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="hero-badge">Built for modern underwriters</div>
+  <h1 class="hero-title" data-i18n-html="pageTitle">
+    Assess the future of <em>smart lending</em>
+  </h1>
+  <p class="hero-subtext" data-i18n="pageSub">
+    Underwrite, analyze, and approve loans from a single financial operating system.
+  </p>
+</div>
+
+<!-- Floating Dashboard Card -->
+<div class="dashboard-card">
+  <!-- Sidebar -->
+  <div class="dashboard-sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z"/></svg>
+    </div>
+    <div class="sidebar-menu">
+      <button type="button" class="tab-btn active" data-tab="form" title="Form Mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+      </button>
+      <button type="button" class="tab-btn" data-tab="voice" title="Voice Assistant">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <button type="button" class="tab-btn" data-tab="simulator" title="Loan Simulator & Amortization">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M7 8h10M7 12h6"/></svg>
+      </button>
+      <button type="button" class="tab-btn" data-tab="audit" title="Audit Trail & Decision Logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Dashboard Body -->
+  <div class="dashboard-body">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <div class="dashboard-title-area">
+        <h2 data-i18n="panelTitle">Your Profile</h2>
+        <p data-i18n="eyebrow">Loan Summary</p>
+      </div>
+      
+      <div class="dashboard-profile">
+        <div class="profile-info">
+          <div class="profile-name">Alex Johnson</div>
+          <div class="profile-role">Risk Underwriter</div>
+        </div>
+        <div class="profile-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 100%; height: 100%; color: #5C6460; background: #E1E4E2;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Dashboard Metrics (Row of 4) -->
+    <div class="dashboard-metrics">
+      <!-- 1. Income Card -->
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="metric-label" data-i18n="labelIncome">Annual income</span>
+          <div class="metric-icon-wrap" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M16 8h.01M8 16h.01"/></svg>
+          </div>
+        </div>
+        <div class="metric-value" id="dashIncome">₹—</div>
+        <div class="metric-subtext"><span data-i18n="incomeHint">(gross, in ₹)</span></div>
+      </div>
+      
+      <!-- 2. Interest Rate Card -->
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="metric-label" data-i18n="labelRate">Interest rate</span>
+          <div class="metric-icon-wrap" style="background: rgba(245, 158, 11, 0.1); color: #F59E0B;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+          </div>
+        </div>
+        <div class="metric-value" id="dashRate">—%</div>
+        <div class="metric-subtext"><span data-i18n="rateHint">(offered)</span></div>
+      </div>
+      
+      <!-- 3. Loan Burden Card -->
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="metric-label" data-i18n="labelPercent">Loan amount</span>
+          <div class="metric-icon-wrap" style="background: rgba(99, 102, 241, 0.1); color: #6366F1;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+        </div>
+        <div class="metric-value" id="dashRatio">—</div>
+        <div class="metric-subtext"><span data-i18n="percentHint">(as % of income)</span></div>
+      </div>
+      
+      <!-- 4. Approval Score Card -->
+      <div class="metric-card" style="background: #0C120F; border-color: #1A221E; color: #FAFBF9;">
+        <div class="metric-top">
+          <span class="metric-label" style="color: var(--text-light-muted);" data-i18n="gaugeLabel">approval score</span>
+          <div class="metric-icon-wrap" style="background: rgba(191, 255, 7, 0.1); color: var(--accent-lime);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </div>
+        </div>
+        <div class="metric-value" id="dashScore" style="color: var(--accent-lime);">—</div>
+        <div class="metric-subtext" style="color: var(--text-light-muted);"><span data-i18n="quickEstimates">Estimate</span></div>
+      </div>
+    </div>
+    
+    <!-- Dashboard Main Grid (2 columns) -->
+    <div class="dashboard-grid">
+      
+      <!-- LEFT COLUMN: Inputs (Form / Voice Wizard) -->
+      <div class="dashboard-left">
+        <!-- Form Mode Container -->
+        <div id="formModeContainer">
+          <form id="loanForm" novalidate>
+            <div class="field-group">
+              <div class="section-label"><span data-i18n="sec1">Applicant</span> <span class="count">01 / 03</span></div>
+              <div class="grid-2">
+                <div class="field" data-field="name">
+                  <label for="name" data-i18n="labelName">Full name</label>
+                  <input type="text" id="name" placeholder="Asha Mehta" required autocomplete="name">
+                  <div class="field-error-msg">Enter the applicant's name.</div>
+                </div>
+                <div class="field" data-field="age">
+                  <label for="age" data-i18n="labelAge">Age</label>
+                  <input type="number" id="age" placeholder="29" min="18" max="100" required>
+                  <div class="field-error-msg">Enter a valid age (18–100).</div>
+                </div>
+              </div>
+              <div class="grid-2">
+                <div class="field" data-field="email">
+                  <label for="email" data-i18n="labelEmail">Email</label>
+                  <input type="email" id="email" placeholder="asha@email.com" required autocomplete="email">
+                  <div class="field-error-msg">Enter a valid email address.</div>
+                </div>
+                <div class="field" data-field="phone">
+                  <label for="phone" data-i18n="labelPhone">Phone</label>
+                  <input type="tel" id="phone" placeholder="+91 98765 43210" required autocomplete="tel">
+                  <div class="field-error-msg">Enter a contact number.</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="field-group">
+              <div class="section-label"><span data-i18n="sec2">Financial details</span> <span class="count">02 / 03</span></div>
+              
+              <div class="field" data-field="income">
+                <label for="income"><span data-i18n="labelIncome">Annual income</span> <span class="hint" data-i18n="incomeHint">(gross, in ₹)</span></label>
+                <div class="input-wrap has-prefix">
+                  <span class="prefix">₹</span>
+                  <input type="number" id="income" placeholder="850,000" min="0" required>
+                </div>
+                <div class="field-error-msg">Enter the applicant's annual income.</div>
+              </div>
+              
+              <div class="field" data-field="ownership">
+                <label for="ownership" data-i18n="labelOwnership">Home ownership</label>
+                <select id="ownership" required>
+                  <option value="" disabled selected data-i18n="ownershipPlaceholder">Select status</option>
+                  <option value="RENT" data-i18n="ownershipRent">Renting</option>
+                  <option value="OWN" data-i18n="ownershipOwn">Owns outright</option>
+                  <option value="MORTGAGE" data-i18n="ownershipMortgage">Mortgage</option>
+                  <option value="OTHER" data-i18n="ownershipOther">Other</option>
+                </select>
+                <div class="field-error-msg">Select a home ownership status.</div>
+              </div>
+              
+              <div class="grid-2">
+                <div class="field" data-field="rate">
+                  <label for="rate"><span data-i18n="labelRate">Interest rate</span> <span class="hint" data-i18n="rateHint">(offered)</span></label>
+                  <div class="input-wrap">
+                    <input type="number" step="0.01" id="rate" placeholder="11.50" min="0" max="40" required>
+                    <span class="suffix">%</span>
+                  </div>
+                  <div class="field-error-msg">Enter the offered interest rate.</div>
+                </div>
+                <div class="field" data-field="percent">
+                  <label for="percent"><span data-i18n="labelPercent">Loan amount</span> <span class="hint" data-i18n="percentHint">(as % of income, e.g. 0.18 = 18%)</span></label>
+                  <div class="input-wrap">
+                    <input type="number" step="0.01" id="percent" placeholder="0.18" min="0" max="1" required>
+                    <span class="suffix">ratio</span>
+                  </div>
+                  <div class="field-error-msg">Enter a value between 0 and 1. For example, 0.20 means 20% of income.</div>
+                </div>
+              </div>
+              
+              <!-- Live Computed Indicators -->
+              <div class="live-metrics-box" id="liveMetricsBox" style="display: none;">
+                <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-dark-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; font-weight: 700;" data-i18n="quickEstimates">Quick Estimates</div>
+                <div class="grid-2">
+                  <div>
+                    <div style="font-size: 11px; color: var(--text-dark-muted); margin-bottom: 2px;" data-i18n="estLoanAmount">Estimated Loan Amount</div>
+                    <div style="font-size: 16px; font-weight: 700; color: var(--text-dark-primary);" id="liveLoanAmount">₹—</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11px; color: var(--text-dark-muted); margin-bottom: 2px;" data-i18n="estEmi">Est. Monthly EMI (5 yr)</div>
+                    <div style="font-size: 16px; font-weight: 700; color: var(--text-dark-primary);" id="liveEmi">₹—</div>
+                  </div>
+                </div>
+                <div class="grid-2" style="margin-top: 12px;">
+                  <div>
+                    <div style="font-size: 11px; color: var(--text-dark-muted); margin-bottom: 2px;" data-i18n="monthlyDebt">Monthly Debt-to-Income</div>
+                    <div style="font-size: 16px; font-weight: 700; color: var(--text-dark-primary);" id="liveDebtRatio">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="field-group">
+              <div class="section-label"><span data-i18n="sec3">Credit history</span> <span class="count">03 / 03</span></div>
+              <div class="field" data-field="default">
+                <label data-i18n="labelDefault">Previous loan default on file</label>
+                <div class="segmented" style="margin-top: 6px;">
+                  <input type="radio" name="default" id="default-no" checked>
+                  <label for="default-no" data-i18n="defaultNo">No record</label>
+                  <input type="radio" name="default" id="default-yes">
+                  <label for="default-yes" data-i18n="defaultYes">Has defaulted</label>
+                </div>
+              </div>
+            </div>
+            
+            <div class="btn-row">
+              <button type="submit" class="primary-btn" id="submitBtn">
+                <span class="btn-spinner"></span>
+                <span class="btn-text" data-i18n="submitBtn">Check My Loan</span>
+                <svg class="arrow" viewBox="0 0 16 16" fill="none" style="width: 14px; height: 14px; stroke: currentColor; stroke-width: 2;"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button type="button" class="reset-btn" id="resetBtn" data-i18n="clearForm">Clear form</button>
+            </div>
+            
+            <p class="privacy-text" data-i18n="privacyNote">Your details will be reviewed by our loan decision system. All information is kept secure and confidential.</p>
+          </form>
+        </div>
+        
+        <!-- Voice Assistant Mode Container -->
+        <div id="voiceModeContainer" style="display: none;">
+          <div class="voice-wizard-card">
+            <!-- Progress -->
+            <div class="voice-header">
+              <span class="voice-header-title" data-i18n="voiceProgress">Voice Assistant Progress</span>
+              <span class="voice-progress-text" id="voiceStepProgressText">Step 1 of 12</span>
+            </div>
+            <div class="voice-progress-track">
+              <div class="voice-progress-fill" id="voiceStepProgressBar" style="width: 8.3%;"></div>
+            </div>
+            
+            <!-- Question -->
+            <div class="voice-question-box">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;">
+                <h2 class="voice-question" id="voiceQuestionText">Welcome to the Credence underwriting assistant.</h2>
+                <button type="button" class="voice-speak-icon-btn" id="speakQuestionBtn" title="Hear Question">
+                  <svg viewBox="0 0 24 24" fill="none" style="width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Injected Input Wrapper -->
+            <div id="voiceInputWrapper"></div>
+            
+            <!-- Microphone Controls -->
+            <div class="voice-mic-controls" id="voiceSpeechControl">
+              <div class="speech-indicator" id="speechIndicator" style="display: none;">
+                <div class="speech-bar"></div>
+                <div class="speech-bar"></div>
+                <div class="speech-bar"></div>
+                <div class="speech-bar"></div>
+                <div class="speech-bar"></div>
+              </div>
+              <button type="button" class="mic-btn" id="micBtn" title="Click to speak">
+                <svg id="micIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="fill: none;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v3"/></svg>
+              </button>
+              <span class="mic-label-text" id="micText" data-i18n="voiceSpeakBtn">Speak Answer</span>
+              <div class="transcription-preview" id="speechTranscription" style="display: none;"></div>
+            </div>
+          </div>
+          
+          <!-- Answers so far Tag cloud -->
+          <div class="voice-summary-panel" id="voiceSummaryPanel" style="display: none;">
+            <div class="voice-summary-title" data-i18n="voiceAnswersSoFar">Your Answers So Far</div>
+            <div class="voice-tags-wrap" id="voiceTagsContainer"></div>
+          </div>
+          
+          <!-- Navigation -->
+          <div class="btn-row" id="voiceWizardNav">
+            <button type="button" class="reset-btn" id="voiceBackBtn" disabled data-i18n="voiceBack">← Back</button>
+            <button type="button" class="primary-btn" id="voiceNextBtn">
+              <span class="btn-text" data-i18n="voiceContinue">Continue</span>
+              <svg class="arrow" viewBox="0 0 16 16" fill="none" style="width: 14px; height: 14px; stroke: currentColor; stroke-width: 2;"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" class="reset-btn" id="voiceRestartBtn" data-i18n="voiceRestart">Restart</button>
+          </div>
+        </div>
+
+        <!-- Loan Scenario Simulator & Amortization Container -->
+        <div id="simulatorModeContainer" style="display: none;">
+          <div class="sim-card">
+            <h2 class="sim-title">Interactive Loan Simulator & Amortization</h2>
+            <p class="sim-subtitle">Simulate borrowing parameters, preview monthly debt amortization, and stress-test loan affordability.</p>
+            
+            <div class="sim-slider-row">
+              <div class="sim-slider-header">
+                <span class="sim-slider-label">Principal Loan Amount</span>
+                <span class="sim-slider-val" id="simLoanAmountVal">$25,000</span>
+              </div>
+              <input type="range" class="sim-range" id="simLoanAmountRange" min="1000" max="250000" step="1000" value="25000">
+            </div>
+
+            <div class="sim-slider-row">
+              <div class="sim-slider-header">
+                <span class="sim-slider-label">Applicant Annual Income</span>
+                <span class="sim-slider-val" id="simIncomeVal">$75,000</span>
+              </div>
+              <input type="range" class="sim-range" id="simIncomeRange" min="10000" max="500000" step="2500" value="75000">
+            </div>
+
+            <div class="sim-slider-row">
+              <div class="sim-slider-header">
+                <span class="sim-slider-label">Interest Rate (% APR)</span>
+                <span class="sim-slider-val" id="simRateVal">8.5%</span>
+              </div>
+              <input type="range" class="sim-range" id="simRateRange" min="1.0" max="30.0" step="0.25" value="8.5">
+            </div>
+
+            <div class="sim-slider-row">
+              <div class="sim-slider-header">
+                <span class="sim-slider-label">Loan Term (Tenure)</span>
+                <span class="sim-slider-val" id="simTermVal">60 Months (5 Yrs)</span>
+              </div>
+              <div class="term-btn-group" id="termBtnGroup">
+                <button type="button" class="term-btn" data-term="12">12M</button>
+                <button type="button" class="term-btn" data-term="24">24M</button>
+                <button type="button" class="term-btn" data-term="36">36M</button>
+                <button type="button" class="term-btn" data-term="48">48M</button>
+                <button type="button" class="term-btn active" data-term="60">60M</button>
+                <button type="button" class="term-btn" data-term="72">72M</button>
+                <button type="button" class="term-btn" data-term="84">84M</button>
+              </div>
+            </div>
+
+            <div class="sim-kpi-grid">
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Monthly EMI</div>
+                <div class="sim-kpi-val" id="simKpiEmi">$512.91</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Total Interest</div>
+                <div class="sim-kpi-val" id="simKpiInterest">$5,774.60</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Total Repayment</div>
+                <div class="sim-kpi-val" id="simKpiTotal">$30,774.60</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Debt-to-Income (DTI)</div>
+                <div class="sim-kpi-val" id="simKpiDti">8.2%</div>
+                <div class="health-pill emerald" id="simHealthPill">Optimal (Affordable)</div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--text-dark-primary);">Amortization Schedule (Year 1 Preview)</span>
+              <button type="button" class="audit-btn primary" id="applySimToFormBtn">
+                <span>Apply to Loan Form</span>
+                <svg viewBox="0 0 16 16" fill="none" style="width: 12px; height: 12px; stroke: currentColor; stroke-width: 2;"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+
+            <div class="amort-table-box">
+              <table class="amort-table">
+                <thead>
+                  <tr>
+                    <th>Mo</th>
+                    <th>Payment</th>
+                    <th>Principal</th>
+                    <th>Interest</th>
+                    <th>Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="simAmortTbody">
+                  <!-- Injected dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit Trail & Decision Logs Container -->
+        <div id="auditModeContainer" style="display: none;">
+          <div class="audit-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h2 class="sim-title">Applications Audit Log</h2>
+              <span class="memo-badge" id="auditTotalBadge">0 Applications</span>
+            </div>
+            <p class="sim-subtitle">Complete historical ledger of algorithmic decisions, risk ratings, and explainability attributions.</p>
+
+            <div class="audit-toolbar">
+              <input type="text" class="audit-search-input" id="auditSearchInput" placeholder="Search by applicant name, phone, or application ID...">
+              <select id="auditStatusFilter" class="audit-btn" style="padding-right: 28px;">
+                <option value="all">All Outcomes</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Declined</option>
+              </select>
+              <button type="button" class="audit-btn" id="refreshAuditBtn" title="Refresh Table">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                <span>Refresh</span>
+              </button>
+              <a href="/api/applications/export/csv" class="audit-btn primary" target="_blank" style="text-decoration: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                <span>Export CSV</span>
+              </a>
+            </div>
+
+            <div class="audit-table-wrap">
+              <table class="audit-table">
+                <thead>
+                  <tr>
+                    <th>App ID</th>
+                    <th>Date / Time</th>
+                    <th>Applicant</th>
+                    <th>Income</th>
+                    <th>Loan Amount</th>
+                    <th>Decision</th>
+                    <th>Risk Grade</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="auditTableBody">
+                  <tr>
+                    <td colspan="8" style="text-align: center; color: var(--text-dark-muted); padding: 24px;">Loading applications ledger...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- RIGHT COLUMN: Evaluation & Analytics -->
+      <div class="dashboard-right">
+        <!-- Gauge card -->
+        <div style="background: var(--dash-card); border: 1px solid var(--dash-border); border-radius: 16px; padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 160 100">
+              <path class="gauge-track" d="M 14 90 A 66 66 0 0 1 146 90" />
+              <path class="gauge-fill" id="gaugeFill" d="M 14 90 A 66 66 0 0 1 146 90" stroke="#10B981" />
+            </svg>
+            <div class="gauge-readout">
+              <div class="gauge-score" id="gaugeScore">—</div>
+              <div class="gauge-label" data-i18n="gaugeLabel">approval score</div>
+            </div>
+          </div>
+          
+          <!-- Completeness status bar -->
+          <div class="completeness-bar-wrap">
+            <div class="completeness-label">
+              <span data-i18n="progressLabel">Application Progress</span>
+              <span id="completenessPct">0%</span>
+            </div>
+            <div class="completeness-track">
+              <div class="completeness-fill" id="completenessFill"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Live feedback checklist (Signals) -->
+        <div style="background: var(--dash-card); border: 1px solid var(--dash-border); border-radius: 16px; padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+          <ul class="signal-list" id="signalList">
+            <li class="signal-item" data-signal="income">
+              <span class="signal-icon">
+                <svg viewBox="0 0 16 16" fill="none" style="width: 10px; height: 10px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"><path d="M3 8L6.5 11.5L13 4"/></svg>
+              </span>
+              <div>
+                <div class="signal-text" data-i18n-html="sigIncomeText"><strong>Income</strong> recorded</div>
+                <div class="signal-value" id="sig-income">—</div>
+              </div>
+            </li>
+            <li class="signal-item" data-signal="ownership">
+              <span class="signal-icon">
+                <svg viewBox="0 0 16 16" fill="none" style="width: 10px; height: 10px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"><path d="M3 8L6.5 11.5L13 4"/></svg>
+              </span>
+              <div>
+                <div class="signal-text" data-i18n-html="sigHousingText"><strong>Housing</strong> status set</div>
+                <div class="signal-value" id="sig-ownership">—</div>
+              </div>
+            </li>
+            <li class="signal-item" data-signal="rate">
+              <span class="signal-icon">
+                <svg viewBox="0 0 16 16" fill="none" style="width: 10px; height: 10px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"><path d="M3 8L6.5 11.5L13 4"/></svg>
+              </span>
+              <div>
+                <div class="signal-text" data-i18n-html="sigRateText"><strong>Rate</strong> within range</div>
+                <div class="signal-value" id="sig-rate">—</div>
+              </div>
+            </li>
+            <li class="signal-item" data-signal="percent">
+              <span class="signal-icon">
+                <svg viewBox="0 0 16 16" fill="none" style="width: 10px; height: 10px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"><path d="M3 8L6.5 11.5L13 4"/></svg>
+              </span>
+              <div>
+                <div class="signal-text" data-i18n-html="sigLoanBurdenText"><strong>Loan burden</strong> calculated</div>
+                <div class="signal-value" id="sig-percent">—</div>
+              </div>
+            </li>
+            <li class="signal-item warn" data-signal="default">
+              <span class="signal-icon">
+                <svg viewBox="0 0 16 16" fill="none" style="width: 10px; height: 10px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"><path d="M3 8L6.5 11.5L13 4"/></svg>
+              </span>
+              <div>
+                <div class="signal-text" data-i18n-html="sigCreditText"><strong>Credit history</strong> reviewed</div>
+                <div class="signal-value" id="sig-default">No record</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Predictions & Explanations (SHAP & DiCE) -->
+        <div class="result-card" id="resultCard">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span class="memo-badge" id="resAppIdBadge">APP-2026-PENDING</span>
+            <span class="memo-badge" id="resRiskTierBadge" style="background: rgba(16, 185, 129, 0.15); color: #059669;">Tier A+</span>
+          </div>
+
+          <div class="result-status" id="resultStatus">
+            <span class="badge-dot"></span>
+            <span id="resultText">—</span>
+          </div>
+          <div class="result-sub" id="resultSub">Awaiting submission.</div>
+
+          <!-- Model Confidence Meter -->
+          <div style="margin: 14px 0;" id="confidenceWrap">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-dark-muted); margin-bottom: 4px;">
+              <span>MODEL CONFIDENCE</span>
+              <span id="resConfidenceVal">--%</span>
+            </div>
+            <div style="height: 6px; border-radius: 3px; background: #E2E8F0; overflow: hidden;">
+              <div id="resConfidenceBar" style="height: 100%; width: 0%; background: #10B981; transition: width 0.6s ease;"></div>
+            </div>
+          </div>
+
+          <!-- Underwriting Memo Summary -->
+          <div class="memo-box" id="resMemoBox" style="display: none;">
+            <div class="memo-header">
+              <span style="font-weight: 700; color: var(--text-dark-primary);">AI Underwriting Memorandum</span>
+              <span style="font-size: 10px; color: var(--text-dark-muted);" id="resMemoTimestamp">--</span>
+            </div>
+            <p id="resMemoSummaryText" style="line-height: 1.5; color: var(--text-dark-secondary); margin-bottom: 10px;">--</p>
+            
+            <div style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: #059669; margin-bottom: 4px;">Key Strengths & Compensating Factors:</div>
+            <ul id="resMemoStrengthsList" style="padding-left: 18px; margin-bottom: 10px; color: var(--text-dark-secondary); font-size: 11.5px; line-height: 1.4;">
+            </ul>
+
+            <div style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: #DC2626; margin-bottom: 4px;">Risk Markers & Monitoring:</div>
+            <ul id="resMemoRisksList" style="padding-left: 18px; color: var(--text-dark-secondary); font-size: 11.5px; line-height: 1.4;">
+            </ul>
+
+            <!-- Automated Counter-Offer (for rejected applications) -->
+            <div class="counter-offer-card" id="resCounterOfferCard" style="display: none;">
+              <div class="counter-offer-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span>Automated Viable Counter-Offer</span>
+              </div>
+              <p id="resCounterOfferRational" style="font-size: 11.5px; color: #065F46; line-height: 1.5; margin-bottom: 8px;">--</p>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
+                <div>Adjusted Principal: <strong id="resCounterOfferAmount" style="color: #065F46;">--</strong></div>
+                <div>New Monthly EMI: <strong id="resCounterOfferEmi" style="color: #065F46;">--</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-actions" style="margin-top: 16px;">
+            <button type="button" class="new-app-btn" id="newAppBtn" data-i18n="newApp">New application</button>
+            <button type="button" id="hearResultBtn" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 11px; border-radius: 10px; border: 1px solid var(--dash-border); background: transparent; color: var(--text-dark-primary); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+              <svg viewBox="0 0 24 24" fill="none" style="width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <span data-i18n="hearResult">Hear Result</span>
+            </button>
+            <button type="button" id="printDecisionMemoBtn" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 11px; border-radius: 10px; border: 1px solid #0C120F; background: #0C120F; color: var(--accent-lime); font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;" title="Print Official Credit Memo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              <span>Print Memo</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Explainability panel -->
+        <div class="explain-panel" id="explainPanel" style="display: none;">
+          <div class="explain-title" data-i18n="whyResult">Why This Result?</div>
+          <div class="explain-sub" data-i18n="whatAffected">What Affected Your Result</div>
+          
+          <!-- SHAP (Financial Performance styled card) -->
+          <div class="explain-card">
+            <div style="font-size: 12.5px; font-weight: 600; color: var(--text-dark-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; color: var(--text-dark-muted);"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+              <span>Feature Contribution Analysis (SHAP)</span>
+            </div>
+            <div style="text-align: center; border-radius: 8px; overflow: hidden; background: #FFFFFF; border: 1px solid var(--dash-border); padding: 8px;">
+              <img id="shapChartImg" src="" alt="SHAP explanation" style="max-width: 100%; border-radius: 6px;">
+            </div>
+          </div>
+          
+          <!-- DiCE (Recent Transactions styled card) -->
+          <div class="cf-card">
+            <div style="font-size: 12.5px; font-weight: 600; color: var(--text-dark-primary); margin-bottom: 4px;" id="cfTitle">How to Improve</div>
+            <div style="font-size: 11px; color: var(--text-dark-muted); margin-bottom: 16px;" id="cfSub">Changes that could help you get approved</div>
+            
+            <div id="cfList">
+              <!-- Injected dynamically -->
+            </div>
+          </div>
+          
+          <div class="panel-footer-note" data-i18n="footerNote">The approval score above is a live preview only. The final loan decision is made by our loan assessment system once you submit.</div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+</body>
+
+
+<script>
+(function(){
+  const form = document.getElementById('loanForm');
+  let lastPredictionResult = null;
+  // ---- User Session & Login Portal ----
+  let currentUser = null;
+  
+  const loginOverlay = document.getElementById('loginOverlay');
+  const loginFormPortal = document.getElementById('loginFormPortal');
+  const loginPhone = document.getElementById('login_phone');
+  const loginName = document.getElementById('login_name');
+  const loginBirthdate = document.getElementById('login_birthdate');
+  const loginEmail = document.getElementById('login_email');
+  const loginRegisterFields = document.getElementById('loginRegisterFields');
+  const loginBtnText = document.getElementById('loginBtnText');
+  const loginSpinner = document.getElementById('loginSpinner');
+  const logoutBtn = document.getElementById('logoutBtn');
+  
+  let isNewUser = false;
+  
+  function checkSession() {
+    const session = localStorage.getItem('credence_user_session');
+    if (session) {
+      currentUser = JSON.parse(session);
+      loginOverlay.style.opacity = '0';
+      loginOverlay.style.visibility = 'hidden';
+      logoutBtn.style.display = 'inline-flex';
+      
+      // Update profile info in dashboard
+      updateProfileDisplay();
+    } else {
+      currentUser = null;
+      loginOverlay.style.opacity = '1';
+      loginOverlay.style.visibility = 'visible';
+      logoutBtn.style.display = 'none';
+    }
+  }
+  
+  function updateProfileDisplay() {
+    if (!currentUser) return;
+    
+    // Update name in top header avatar card
+    document.querySelectorAll('.profile-name').forEach(el => {
+      el.textContent = currentUser.name;
+    });
+    
+    // Pre-fill full name input in form mode
+    if (fields.name) {
+      fields.name.value = currentUser.name;
+      fields.name.dispatchEvent(new Event('input'));
+    }
+    
+    // Pre-fill email and phone in form mode
+    if (fields.email && currentUser.email) {
+      fields.email.value = currentUser.email;
+      fields.email.dispatchEvent(new Event('input'));
+    }
+    if (fields.phone) {
+      fields.phone.value = currentUser.mobile_number;
+      fields.phone.dispatchEvent(new Event('input'));
+    }
+  }
+  
+  if (loginFormPortal) {
+    loginFormPortal.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const phoneVal = loginPhone.value.trim();
+      if (!phoneVal || phoneVal.length < 7) {
+        document.getElementById('login_phone_error').style.display = 'block';
+        loginPhone.classList.add('error');
+        return;
+      } else {
+        document.getElementById('login_phone_error').style.display = 'none';
+        loginPhone.classList.remove('error');
+      }
+      
+      if (!isNewUser) {
+        // Step 1: Check login status
+        loginSpinner.style.display = 'inline-block';
+        loginBtnText.style.display = 'none';
+        
+        try {
+          const res = await fetch('/api/login-check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile_number: phoneVal })
+          });
+          
+          if (!res.ok) throw new Error('Check failed');
+          
+          const result = await res.json();
+          if (result.exists) {
+            // Log in directly
+            localStorage.setItem('credence_user_session', JSON.stringify(result.user));
+            checkSession();
+            showToast(`Welcome back, ${result.user.name}!`, false);
+          } else {
+            // User does not exist, show registration fields
+            isNewUser = true;
+            loginRegisterFields.classList.add('show');
+            loginBtnText.textContent = 'Create Profile';
+            loginPhone.readOnly = true; // prevent editing phone during registration
+            setTimeout(() => loginName.focus(), 150);
+          }
+        } catch (err) {
+          showToast('Failed to connect to authentication server.', true);
+        } finally {
+          loginSpinner.style.display = 'none';
+          loginBtnText.style.display = 'inline';
+        }
+      } else {
+        // Step 2: Perform registration
+        const nameVal = loginName.value.trim();
+        const dobVal = loginBirthdate.value;
+        const emailVal = loginEmail.value.trim();
+        
+        let valid = true;
+        if (!nameVal) {
+          document.getElementById('login_name_error').style.display = 'block';
+          loginName.classList.add('error');
+          valid = false;
+        } else {
+          document.getElementById('login_name_error').style.display = 'none';
+          loginName.classList.remove('error');
+        }
+        
+        if (!dobVal) {
+          document.getElementById('login_birthdate_error').style.display = 'block';
+          loginBirthdate.classList.add('error');
+          valid = false;
+        } else {
+          document.getElementById('login_birthdate_error').style.display = 'none';
+          loginBirthdate.classList.remove('error');
+        }
+
+        if (!emailVal || !emailVal.includes('@')) {
+          document.getElementById('login_email_error').style.display = 'block';
+          loginEmail.classList.add('error');
+          valid = false;
+        } else {
+          document.getElementById('login_email_error').style.display = 'none';
+          loginEmail.classList.remove('error');
+        }
+        
+        if (!valid) return;
+        
+        loginSpinner.style.display = 'inline-block';
+        loginBtnText.style.display = 'none';
+        
+        try {
+          const res = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              mobile_number: phoneVal,
+              name: nameVal,
+              birthdate: dobVal,
+              email: emailVal
+            })
+          });
+          
+          if (!res.ok) throw new Error('Registration failed');
+          
+          const result = await res.json();
+          localStorage.setItem('credence_user_session', JSON.stringify(result.user));
+          checkSession();
+          showToast(`Profile created successfully! Welcome, ${result.user.name}.`, false);
+        } catch (err) {
+          showToast('Profile creation failed. Please try again.', true);
+        } finally {
+          loginSpinner.style.display = 'none';
+          loginBtnText.style.display = 'inline';
+        }
+      }
+    });
+  }
+  
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('credence_user_session');
+      isNewUser = false;
+      loginPhone.readOnly = false;
+      loginPhone.value = '';
+      loginName.value = '';
+      loginBirthdate.value = '';
+      loginEmail.value = '';
+      loginRegisterFields.classList.remove('show');
+      loginBtnText.textContent = 'Continue';
+      
+      // Reset form fields
+      resetForm();
+      if (fields.name) fields.name.value = '';
+      
+      checkSession();
+      showToast('Logged out successfully.', false);
+    });
+  }
+
+  const submitBtn = document.getElementById('submitBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const newAppBtn = document.getElementById('newAppBtn');
+  const toast = document.getElementById('toast');
+
+  const gaugeFill = document.getElementById('gaugeFill');
+  const gaugeScore = document.getElementById('gaugeScore');
+  const completenessFill = document.getElementById('completenessFill');
+  const completenessPct = document.getElementById('completenessPct');
+
+  const GAUGE_LEN = 251.2;
+
+  const fields = {
+    name: document.getElementById('name'),
+    age: document.getElementById('age'),
+    email: document.getElementById('email'),
+    phone: document.getElementById('phone'),
+    income: document.getElementById('income'),
+    ownership: document.getElementById('ownership'),
+    rate: document.getElementById('rate'),
+    percent: document.getElementById('percent'),
+  };
+
+  function showToast(msg, isError){
+    toast.textContent = msg;
+    toast.className = 'toast show' + (isError ? ' error' : '');
+    setTimeout(()=> toast.classList.remove('show'), 3200);
+  }
+
+  function getDefaultValue(){
+    return document.getElementById('default-yes').checked ? 'YES' : 'NO';
+  }
+
+  // ---- live signal panel ----
+  function updateSignals(){
+    const items = ['name','age','email','phone','income','ownership','rate','percent'];
+    let filledCount = 0;
+    items.forEach(k=>{
+      if (fields[k].value && fields[k].value.toString().trim() !== '') filledCount++;
+    });
+    const pct = Math.round((filledCount/items.length)*100);
+    completenessFill.style.width = pct + '%';
+    completenessPct.textContent = pct + '%';
+
+    // income signal
+    const incomeEl = document.querySelector('[data-signal="income"]');
+    const sigIncome = document.getElementById('sig-income');
+    if (fields.income.value){
+      incomeEl.classList.add('active');
+      sigIncome.textContent = '₹' + Number(fields.income.value).toLocaleString('en-IN');
+    } else {
+      incomeEl.classList.remove('active');
+      sigIncome.textContent = '—';
+    }
+
+    // ownership
+    const ownEl = document.querySelector('[data-signal="ownership"]');
+    const sigOwn = document.getElementById('sig-ownership');
+    if (fields.ownership.value){
+      ownEl.classList.add('active');
+      const labelMap = {RENT:'Renting', OWN:'Owns outright', MORTGAGE:'Mortgage', OTHER:'Other'};
+      sigOwn.textContent = labelMap[fields.ownership.value] || fields.ownership.value;
+    } else {
+      ownEl.classList.remove('active');
+      sigOwn.textContent = '—';
+    }
+
+    // rate
+    const rateEl = document.querySelector('[data-signal="rate"]');
+    const sigRate = document.getElementById('sig-rate');
+    if (fields.rate.value){
+      rateEl.classList.add('active');
+      sigRate.textContent = fields.rate.value + TRANSLATIONS[currentLang].sigRateSuffix;
+    } else {
+      rateEl.classList.remove('active');
+      sigRate.textContent = '—';
+    }
+
+    // percent
+    const percEl = document.querySelector('[data-signal="percent"]');
+    const sigPerc = document.getElementById('sig-percent');
+    if (fields.percent.value){
+      percEl.classList.add('active');
+      sigPerc.textContent = (Number(fields.percent.value)*100).toFixed(0) + TRANSLATIONS[currentLang].sigPercentSuffix;
+    } else {
+      percEl.classList.remove('active');
+      sigPerc.textContent = '—';
+    }
+
+    // default
+    const defEl = document.querySelector('[data-signal="default"]');
+    const sigDef = document.getElementById('sig-default');
+    const defVal = getDefaultValue();
+    defEl.classList.add('active');
+    sigDef.textContent = defVal === 'YES' ? TRANSLATIONS[currentLang].sigDefaultRecord : TRANSLATIONS[currentLang].sigNoRecord;
+
+    // Update dashboard metrics
+    const dashInc = document.getElementById('dashIncome');
+    if (dashInc) {
+      dashInc.textContent = fields.income.value ? '₹' + Number(fields.income.value).toLocaleString('en-IN') : '₹—';
+    }
+    const dashRt = document.getElementById('dashRate');
+    if (dashRt) {
+      dashRt.textContent = fields.rate.value ? fields.rate.value + '%' : '—%';
+    }
+    const dashRat = document.getElementById('dashRatio');
+    if (dashRat) {
+      dashRat.textContent = fields.percent.value ? fields.percent.value : '—';
+    }
+
+    updateGauge(filledCount, items.length);
+    updateLiveHeuristics();
+  }
+
+  function updateGauge(filledCount, total){
+    if (filledCount === 0){
+      gaugeFill.style.strokeDashoffset = GAUGE_LEN;
+      gaugeScore.textContent = '—';
+      gaugeScore.style.color = '#94A3B8';
+      const ds = document.getElementById('dashScore');
+      if (ds) { ds.textContent = '—'; ds.style.color = 'var(--text-dark-muted)'; }
+      return;
+    }
+
+    // heuristic composite score 0-100, purely a *preview* — NOT the model
+    let score = 60; // baseline neutral
+
+    if (fields.income.value){
+      const inc = Number(fields.income.value);
+      if (inc >= 1000000) score += 14;
+      else if (inc >= 500000) score += 7;
+      else if (inc > 0) score -= 4;
+    }
+    if (fields.percent.value){
+      const p = Number(fields.percent.value);
+      if (p <= 0.15) score += 10;
+      else if (p <= 0.30) score += 2;
+      else score -= 16;
+    }
+    if (fields.rate.value){
+      const r = Number(fields.rate.value);
+      if (r <= 10) score += 8;
+      else if (r <= 16) score += 0;
+      else score -= 10;
+    }
+    if (fields.ownership.value === 'OWN') score += 8;
+    if (fields.ownership.value === 'MORTGAGE') score += 3;
+    if (fields.ownership.value === 'RENT') score -= 2;
+
+    if (getDefaultValue() === 'YES') score -= 22;
+
+    score = Math.max(4, Math.min(96, Math.round(score)));
+
+    const offset = GAUGE_LEN - (GAUGE_LEN * score/100);
+    gaugeFill.style.strokeDashoffset = offset;
+
+    let color = '#10B981';
+    if (score < 40) color = '#EF4444';
+    else if (score < 65) color = '#F59E0B';
+    gaugeFill.setAttribute('stroke', color);
+    gaugeScore.style.color = color;
+    gaugeScore.textContent = score;
+    
+    const ds = document.getElementById('dashScore');
+    if (ds) { ds.textContent = score; ds.style.color = color; }
+  }
+
+  Object.values(fields).forEach(el=>{
+    el.addEventListener('input', updateSignals);
+    el.addEventListener('change', updateSignals);
+  });
+  document.getElementById('default-no').addEventListener('change', updateSignals);
+  document.getElementById('default-yes').addEventListener('change', updateSignals);
+
+  // ---- validation ----
+  function setFieldState(el, valid, key){
+    const wrap = document.querySelector(`[data-field="${key}"]`);
+    if (!wrap) return;
+    wrap.classList.toggle('valid', valid);
+    wrap.classList.toggle('error', !valid);
+  }
+
+  function validate(){
+    let ok = true;
+    const checks = [
+      ['name', fields.name.value.trim().length > 0],
+      ['age', fields.age.value && Number(fields.age.value) >= 18 && Number(fields.age.value) <= 100],
+      ['email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.value)],
+      ['phone', fields.phone.value.trim().length >= 7],
+      ['income', fields.income.value && Number(fields.income.value) > 0],
+      ['ownership', !!fields.ownership.value],
+      ['rate', fields.rate.value !== '' && Number(fields.rate.value) >= 0],
+      ['percent', fields.percent.value !== '' && Number(fields.percent.value) >= 0],
+    ];
+    checks.forEach(([key, valid])=>{
+      setFieldState(fields[key], valid, key);
+      if (!valid) ok = false;
+    });
+    return ok;
+  }
+
+  // ---- submit ----
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+
+    if (!validate()){
+      showToast('Please complete all required fields correctly.', true);
+      return;
+    }
+
+    const payload = {
+      name: fields.name.value.trim(),
+      age: parseInt(fields.age.value, 10),
+      email: fields.email.value.trim(),
+      phone: fields.phone.value.trim(),
+      person_income: parseFloat(fields.income.value),
+      person_home_ownership: fields.ownership.value,
+      loan_int_rate: parseFloat(fields.rate.value),
+      loan_percent_income: parseFloat(fields.percent.value),
+      previous_loan_defaults_on_file: getDefaultValue(),
+    };
+
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+
+    try{
+      const res = await fetch('/predict', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok){
+        const errBody = await res.json().catch(()=>({}));
+        throw new Error(errBody.detail || `Request failed (${res.status})`);
+      }
+
+      const result = await res.json();
+      lastPredictionResult = result;
+      renderResult(result);
+
+    } catch(err){
+      showToast(err.message || 'Something went wrong. Please try again.', true);
+    } finally {
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+    }
+  });
+
+  function updateLiveHeuristics() {
+    const income = parseFloat(fields.income.value);
+    const rate = parseFloat(fields.rate.value);
+    const percent = parseFloat(fields.percent.value);
+    
+    const liveBox = document.querySelector('.live-metrics-box');
+    const liveLoanAmount = document.getElementById('liveLoanAmount');
+    const liveEmi = document.getElementById('liveEmi');
+    const liveDebtRatio = document.getElementById('liveDebtRatio');
+    
+    if (!isNaN(income) && !isNaN(percent) && income > 0 && percent >= 0) {
+      liveBox.style.display = 'block';
+      const principal = income * percent;
+      liveLoanAmount.textContent = '₹' + Math.round(principal).toLocaleString('en-IN');
+      
+      if (!isNaN(rate) && rate >= 0) {
+        const r_monthly = rate / 12 / 100;
+        const term_months = 60;
+        let emi = 0;
+        if (r_monthly > 0) {
+          emi = principal * r_monthly * Math.pow(1 + r_monthly, term_months) / (Math.pow(1 + r_monthly, term_months) - 1);
+        } else {
+          emi = principal / term_months;
+        }
+        liveEmi.textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
+        
+        const monthly_income = income / 12;
+        const ratio = (emi / monthly_income) * 100;
+        
+        liveDebtRatio.textContent = ratio.toFixed(1) + '%';
+        if (ratio > 40) {
+          liveDebtRatio.style.color = 'var(--red)';
+        } else if (ratio > 30) {
+          liveDebtRatio.style.color = 'var(--amber)';
+        } else {
+          liveDebtRatio.style.color = 'var(--emerald)';
+        }
+      } else {
+        liveEmi.textContent = '₹—';
+        liveDebtRatio.textContent = '—';
+        liveDebtRatio.style.color = 'var(--text-primary)';
+      }
+    } else {
+      liveBox.style.display = 'none';
+    }
+  }
+
+  function renderResult(result){
+    const card = document.getElementById('resultCard');
+    const status = document.getElementById('resultStatus');
+    const text = document.getElementById('resultText');
+    const sub = document.getElementById('resultSub');
+    const dot = status.querySelector('.badge-dot');
+
+    card.classList.remove('approved-state', 'declined-state');
+    card.classList.add('show');
+
+    const approved = String(result.prediction).toLowerCase() === 'approved';
+    card.classList.add(approved ? 'approved-state' : 'declined-state');
+
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS['en'];
+    text.textContent = approved ? t.resultApproved : t.resultRejected;
+    dot.style.background = approved ? 'var(--emerald)' : 'var(--red)';
+    status.style.color = approved ? '#34D399' : '#F87171';
+    sub.textContent = approved ? t.resultApprovedMsg : t.resultRejectedMsg;
+
+    // Application ID & Risk Grade Badges
+    const appIdBadge = document.getElementById('resAppIdBadge');
+    if (appIdBadge && result.application_id) {
+      appIdBadge.textContent = result.application_id;
+    }
+
+    const riskTierBadge = document.getElementById('resRiskTierBadge');
+    if (riskTierBadge && result.risk_grade) {
+      riskTierBadge.textContent = result.risk_grade;
+      if (approved) {
+        riskTierBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+        riskTierBadge.style.color = '#059669';
+      } else {
+        riskTierBadge.style.background = 'rgba(239, 68, 68, 0.15)';
+        riskTierBadge.style.color = '#DC2626';
+      }
+    }
+
+    // Model Confidence Meter
+    const confVal = document.getElementById('resConfidenceVal');
+    const confBar = document.getElementById('resConfidenceBar');
+    if (confVal && confBar && result.confidence_score !== undefined) {
+      confVal.textContent = result.confidence_score + '%';
+      confBar.style.width = result.confidence_score + '%';
+      confBar.style.background = approved ? '#10B981' : '#EF4444';
+    }
+
+    // AI Underwriting Memo Summary
+    const memoBox = document.getElementById('resMemoBox');
+    if (memoBox && result.underwriting_memo) {
+      memoBox.style.display = 'block';
+      const memo = result.underwriting_memo;
+      document.getElementById('resMemoTimestamp').textContent = memo.generated_at || '';
+      document.getElementById('resMemoSummaryText').textContent = memo.summary || '';
+      
+      const strengthsList = document.getElementById('resMemoStrengthsList');
+      strengthsList.innerHTML = '';
+      (memo.strengths || []).forEach(str => {
+        const li = document.createElement('li');
+        li.textContent = str;
+        strengthsList.appendChild(li);
+      });
+
+      const risksList = document.getElementById('resMemoRisksList');
+      risksList.innerHTML = '';
+      (memo.risk_factors || []).forEach(rsk => {
+        const li = document.createElement('li');
+        li.textContent = rsk;
+        risksList.appendChild(li);
+      });
+
+      // Viable Counter-Offer (if declined)
+      const counterOfferCard = document.getElementById('resCounterOfferCard');
+      if (counterOfferCard) {
+        if (!approved && memo.alternative_offer) {
+          counterOfferCard.style.display = 'block';
+          document.getElementById('resCounterOfferRational').textContent = memo.alternative_offer.rationalization;
+          document.getElementById('resCounterOfferAmount').textContent = '₹' + Math.round(memo.alternative_offer.suggested_loan_amount).toLocaleString('en-IN');
+          document.getElementById('resCounterOfferEmi').textContent = '₹' + Math.round(memo.alternative_offer.estimated_monthly_emi).toLocaleString('en-IN') + '/mo';
+        } else {
+          counterOfferCard.style.display = 'none';
+        }
+      }
+    }
+
+    // Show Explainability Visualizations
+    const explainPanel = document.getElementById('explainPanel');
+    if (result.shap_chart) {
+      explainPanel.style.display = 'block';
+      document.getElementById('shapChartImg').src = 'data:image/png;base64,' + result.shap_chart;
+      
+      const cfTitle = document.getElementById('cfTitle');
+      const cfSub = document.getElementById('cfSub');
+      const cfList = document.getElementById('cfList');
+      
+      cfTitle.textContent = approved ? t.cfRejTitle : t.cfApprTitle;
+      cfSub.textContent = approved ? t.cfSubApproved : t.cfSubRejected;
+        
+      cfList.innerHTML = '';
+      if (result.counterfactuals && result.counterfactuals.length > 0) {
+        result.counterfactuals.forEach((scenario, index) => {
+          const item = document.createElement('div');
+          item.style.padding = '12px';
+          item.style.borderRadius = '8px';
+          item.style.background = 'rgba(255, 255, 255, 0.02)';
+          item.style.border = '1px solid var(--glass-border)';
+          item.style.fontSize = '12px';
+          item.style.lineHeight = '1.6';
+          
+          item.innerHTML = `
+            <div style="font-weight: 600; color: var(--accent-primary); margin-bottom: 6px;">${t.altOption} ${index + 1}</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px;">
+              <div><span style="color: var(--text-muted);">${t.cfAnnualIncome}</span> <strong style="color: var(--text-primary);">&#8377;${Math.round(scenario.person_income).toLocaleString('en-IN')}</strong></div>
+              <div><span style="color: var(--text-muted);">${t.cfInterestRate}</span> <strong style="color: var(--text-primary);">${scenario.loan_int_rate.toFixed(2)}%</strong></div>
+              <div><span style="color: var(--text-muted);">${t.cfLoanRatio}</span> <strong style="color: var(--text-primary);">${scenario.loan_percent_income.toFixed(2)}</strong></div>
+              <div><span style="color: var(--text-muted);">${t.cfDefaults}</span> <strong style="color: var(--text-primary);">${(String(scenario.previous_loan_defaults_on_file).toUpperCase() === 'YES' || String(scenario.previous_loan_defaults_on_file).toUpperCase() === 'Y') ? t.defaultYes : t.defaultNo}</strong></div>
+            </div>
+          `;
+          cfList.appendChild(item);
+        });
+      } else {
+        cfList.innerHTML = `<div style="color: var(--text-muted); font-size: 12px; font-style: italic;">${t.noAltSuggestions}</div>`;
+      }
+    } else {
+      explainPanel.style.display = 'none';
+    }
+
+    card.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  // Print Decision Memo Handler
+  const printDecisionMemoBtn = document.getElementById('printDecisionMemoBtn');
+  if (printDecisionMemoBtn) {
+    printDecisionMemoBtn.addEventListener('click', () => {
+      window.print();
+    });
+  }
+
+  // ---- reset ----
+  function resetForm(){
+    form.reset();
+    document.querySelectorAll('.field').forEach(f=>{
+      f.classList.remove('valid','error');
+    });
+    document.getElementById('resultCard').classList.remove('show', 'approved-state', 'declined-state');
+    document.getElementById('explainPanel').style.display = 'none';
+    const memoBox = document.getElementById('resMemoBox');
+    if (memoBox) memoBox.style.display = 'none';
+    updateSignals();
+  }
+  resetBtn.addEventListener('click', resetForm);
+  newAppBtn.addEventListener('click', resetForm);
+  const hearResultBtn = document.getElementById('hearResultBtn');
+  if (hearResultBtn) {
+    hearResultBtn.addEventListener('click', speakPredictionResult);
+  }
+
+  // ---- Interactive Tab Switching (Form, Voice, Simulator, Audit) ----
+  const formTabBtn = document.querySelector('[data-tab="form"]');
+  const voiceTabBtn = document.querySelector('[data-tab="voice"]');
+  const simTabBtn = document.querySelector('[data-tab="simulator"]');
+  const auditTabBtn = document.querySelector('[data-tab="audit"]');
+
+  const formModeContainer = document.getElementById('formModeContainer');
+  const voiceModeContainer = document.getElementById('voiceModeContainer');
+  const simulatorModeContainer = document.getElementById('simulatorModeContainer');
+  const auditModeContainer = document.getElementById('auditModeContainer');
+
+  function switchTab(tabName) {
+    [formTabBtn, voiceTabBtn, simTabBtn, auditTabBtn].forEach(btn => {
+      if (btn) btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
+    });
+
+    if (formModeContainer) formModeContainer.style.display = (tabName === 'form') ? 'block' : 'none';
+    if (voiceModeContainer) voiceModeContainer.style.display = (tabName === 'voice') ? 'block' : 'none';
+    if (simulatorModeContainer) simulatorModeContainer.style.display = (tabName === 'simulator') ? 'block' : 'none';
+    if (auditModeContainer) auditModeContainer.style.display = (tabName === 'audit') ? 'block' : 'none';
+
+    if (tabName === 'voice') renderVoiceStep();
+    if (tabName === 'simulator') updateSimulator();
+    if (tabName === 'audit') loadApplications();
+  }
+
+  if (formTabBtn) formTabBtn.addEventListener('click', () => switchTab('form'));
+  if (voiceTabBtn) voiceTabBtn.addEventListener('click', () => switchTab('voice'));
+  if (simTabBtn) simTabBtn.addEventListener('click', () => switchTab('simulator'));
+  if (auditTabBtn) auditTabBtn.addEventListener('click', () => switchTab('audit'));
+
+  // Topbar nav links
+  const navUnderwriting = document.getElementById('navUnderwriting');
+  const navSimulator = document.getElementById('navSimulator');
+  const navAudit = document.getElementById('navAudit');
+  if (navUnderwriting) navUnderwriting.addEventListener('click', () => switchTab('form'));
+  if (navSimulator) navSimulator.addEventListener('click', () => switchTab('simulator'));
+  if (navAudit) navAudit.addEventListener('click', () => switchTab('audit'));
+
+  // ---- Loan Scenario Simulator Engine ----
+  let simTermMonths = 60;
+  const simLoanAmountRange = document.getElementById('simLoanAmountRange');
+  const simIncomeRange = document.getElementById('simIncomeRange');
+  const simRateRange = document.getElementById('simRateRange');
+  const simLoanAmountVal = document.getElementById('simLoanAmountVal');
+  const simIncomeVal = document.getElementById('simIncomeVal');
+  const simRateVal = document.getElementById('simRateVal');
+  const simTermVal = document.getElementById('simTermVal');
+
+  const simKpiEmi = document.getElementById('simKpiEmi');
+  const simKpiInterest = document.getElementById('simKpiInterest');
+  const simKpiTotal = document.getElementById('simKpiTotal');
+  const simKpiDti = document.getElementById('simKpiDti');
+  const simHealthPill = document.getElementById('simHealthPill');
+  const simAmortTbody = document.getElementById('simAmortTbody');
+
+  function updateSimulator() {
+    if (!simLoanAmountRange || !simIncomeRange || !simRateRange) return;
+
+    const principal = parseFloat(simLoanAmountRange.value) || 25000;
+    const income = parseFloat(simIncomeRange.value) || 75000;
+    const rate = parseFloat(simRateRange.value) || 8.5;
+    const n = simTermMonths;
+
+    simLoanAmountVal.textContent = '₹' + Math.round(principal).toLocaleString('en-IN');
+    simIncomeVal.textContent = '₹' + Math.round(income).toLocaleString('en-IN');
+    simRateVal.textContent = rate.toFixed(2) + '%';
+    simTermVal.textContent = `${n} Months (${(n/12).toFixed(1)} Yrs)`;
+
+    const r = (rate / 100) / 12;
+    let emi = 0;
+    if (r > 0) {
+      emi = principal * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    } else {
+      emi = principal / n;
+    }
+
+    const totalPayment = emi * n;
+    const totalInterest = totalPayment - principal;
+    const monthlyIncome = income / 12;
+    const dti = (emi / monthlyIncome) * 100;
+
+    simKpiEmi.textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
+    simKpiInterest.textContent = '₹' + Math.round(totalInterest).toLocaleString('en-IN');
+    simKpiTotal.textContent = '₹' + Math.round(totalPayment).toLocaleString('en-IN');
+    simKpiDti.textContent = dti.toFixed(1) + '%';
+
+    if (simHealthPill) {
+      if (dti <= 28) {
+        simHealthPill.className = 'health-pill emerald';
+        simHealthPill.textContent = 'Optimal (Affordable)';
+      } else if (dti <= 38) {
+        simHealthPill.className = 'health-pill amber';
+        simHealthPill.textContent = 'Moderate (Acceptable)';
+      } else {
+        simHealthPill.className = 'health-pill rose';
+        simHealthPill.textContent = 'Strained (High Debt Risk)';
+      }
+    }
+
+    // Amortization Schedule (Year 1)
+    if (simAmortTbody) {
+      simAmortTbody.innerHTML = '';
+      let balance = principal;
+      for (let m = 1; m <= Math.min(12, n); m++) {
+        const intPortion = balance * r;
+        const princPortion = emi - intPortion;
+        balance = Math.max(0, balance - princPortion);
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>M${m}</td>
+          <td>₹${Math.round(emi).toLocaleString('en-IN')}</td>
+          <td>₹${Math.round(princPortion).toLocaleString('en-IN')}</td>
+          <td>₹${Math.round(intPortion).toLocaleString('en-IN')}</td>
+          <td>₹${Math.round(balance).toLocaleString('en-IN')}</td>
+        `;
+        simAmortTbody.appendChild(tr);
+      }
+    }
+  }
+
+  if (simLoanAmountRange) simLoanAmountRange.addEventListener('input', updateSimulator);
+  if (simIncomeRange) simIncomeRange.addEventListener('input', updateSimulator);
+  if (simRateRange) simRateRange.addEventListener('input', updateSimulator);
+
+  document.querySelectorAll('.term-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      simTermMonths = parseInt(btn.getAttribute('data-term'), 10) || 60;
+      updateSimulator();
+    });
+  });
+
+  // Transfer Simulator Terms to Underwriting Form
+  const applySimToFormBtn = document.getElementById('applySimToFormBtn');
+  if (applySimToFormBtn) {
+    applySimToFormBtn.addEventListener('click', () => {
+      const principal = parseFloat(simLoanAmountRange.value);
+      const income = parseFloat(simIncomeRange.value);
+      const rate = parseFloat(simRateRange.value);
+      const ratio = principal / income;
+
+      if (fields.income) fields.income.value = income;
+      if (fields.rate) fields.rate.value = rate;
+      if (fields.percent) fields.percent.value = ratio.toFixed(2);
+
+      updateSignals();
+      updateLiveHeuristics();
+      switchTab('form');
+      showToast('Simulated parameters transferred to Underwriting Form!', false);
+    });
+  }
+
+  // ---- Applications Audit History Loader ----
+  async function loadApplications() {
+    const tbody = document.getElementById('auditTableBody');
+    const totalBadge = document.getElementById('auditTotalBadge');
+    const searchVal = document.getElementById('auditSearchInput') ? document.getElementById('auditSearchInput').value : '';
+    const statusVal = document.getElementById('auditStatusFilter') ? document.getElementById('auditStatusFilter').value : 'all';
+
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-dark-muted); padding: 24px;">Refreshing applications ledger...</td></tr>';
+
+    try {
+      let url = '/api/applications?limit=50';
+      if (searchVal) url += `&q=${encodeURIComponent(searchVal)}`;
+      if (statusVal && statusVal !== 'all') url += `&status=${encodeURIComponent(statusVal)}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+      const apps = data.applications || [];
+
+      if (totalBadge) totalBadge.textContent = `${apps.length} Applications`;
+
+      if (apps.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-dark-muted); padding: 24px;">No applications found matching criteria.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = '';
+      apps.forEach(app => {
+        const tr = document.createElement('tr');
+        const isApproved = String(app.prediction).toLowerCase() === 'approved';
+        const badgeClass = isApproved ? 'badge-appr' : 'badge-decl';
+        const formattedIncome = app.income ? '₹' + Math.round(app.income).toLocaleString('en-IN') : '—';
+        const formattedAmount = app.loan_amount ? '₹' + Math.round(app.loan_amount).toLocaleString('en-IN') : '—';
+
+        tr.innerHTML = `
+          <td><strong style="font-family: var(--font-mono); color: var(--text-dark-primary);">${app.application_id}</strong></td>
+          <td style="font-size: 11px; color: var(--text-dark-muted);">${app.created_at || '—'}</td>
+          <td><strong>${app.name}</strong><br><span style="font-size: 10.5px; color: var(--text-dark-muted);">${app.phone || ''}</span></td>
+          <td>${formattedIncome}</td>
+          <td>${formattedAmount}</td>
+          <td><span class="${badgeClass}">${app.prediction}</span></td>
+          <td><span style="font-size: 11px; font-weight: 700;">${app.risk_grade || 'Tier B'}</span></td>
+          <td>
+            <button type="button" class="audit-btn" style="padding: 4px 10px; font-size: 11px;" onclick="viewAppDetail('${app.application_id}')">
+              View Memo
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #DC2626; padding: 24px;">Error fetching audit log: ${err.message}</td></tr>`;
+    }
+  }
+
+  window.viewAppDetail = async function(appId) {
+    try {
+      const res = await fetch(`/api/applications/${appId}`);
+      if (!res.ok) throw new Error("Application detail fetch failed");
+      const appData = await res.json();
+      renderResult(appData);
+      switchTab('form');
+      showToast(`Loaded decision memo for ${appId}`, false);
+    } catch (e) {
+      showToast(e.message, true);
+    }
+  };
+
+  const refreshAuditBtn = document.getElementById('refreshAuditBtn');
+  if (refreshAuditBtn) refreshAuditBtn.addEventListener('click', loadApplications);
+  const auditSearchInput = document.getElementById('auditSearchInput');
+  if (auditSearchInput) auditSearchInput.addEventListener('input', () => {
+    clearTimeout(window._auditDebounce);
+    window._auditDebounce = setTimeout(loadApplications, 300);
+  });
+  const auditStatusFilter = document.getElementById('auditStatusFilter');
+  if (auditStatusFilter) auditStatusFilter.addEventListener('change', loadApplications);
+
+  // ---- Multilingual Support ----
+  let currentLang = 'en';
+
+  const TRANSLATIONS = {
+    en: {
+      brandTag:'Loan Portal', statusOnline:'Online · v1.0',
+      eyebrow:'Loan Application', pageTitle:'Apply for a Loan',
+      pageSub:"Fill in the applicant's details below. The summary on the right will update as you go, giving you a quick preview of the application.",
+      tabForm:'📋 Form Mode', tabVoice:'🎤 Voice Assistant',
+      sec1:'Applicant', sec2:'Financial details', sec3:'Credit history',
+      labelName:'Full name', labelAge:'Age', labelEmail:'Email', labelPhone:'Phone',
+      labelIncome:'Annual income', incomeHint:'(gross, in ₹)',
+      labelOwnership:'Home ownership', ownershipPlaceholder:'Select status',
+      ownershipRent:'Renting', ownershipOwn:'Owns outright', ownershipMortgage:'Mortgage', ownershipOther:'Other',
+      labelRate:'Interest rate', rateHint:'(offered)',
+      labelPercent:'Loan amount', percentHint:'(as % of income, e.g. 0.18 = 18%)',
+      labelDefault:'Previous loan default on file', defaultNo:'No record', defaultYes:'Has defaulted',
+      quickEstimates:'Quick Estimates',
+      estLoanAmount:'Estimated Loan Amount', estEmi:'Est. Monthly EMI (5 yr)', monthlyDebt:'Monthly Debt-to-Income',
+      submitBtn:'Check My Loan', clearForm:'Clear form',
+      privacyNote:'Your details will be reviewed by our loan decision system. All information is kept secure and confidential.',
+      voiceProgress:'Voice Assistant Progress',
+      voiceBack:'← Back', voiceContinue:'Continue', voiceSubmit:'Submit', voiceDone:'Done', voiceRestart:'Restart',
+      voiceSpeakBtn:'Speak Answer', voiceListening:'Listening...',
+      voiceAnswersSoFar:'Your Answers So Far',
+      panelEyebrow:'Loan Summary', panelTitle:'Your Profile',
+      gaugeLabel:'approval score', progressLabel:'Application Progress',
+      sigIncomeText:'<strong>Income</strong> recorded',
+      sigHousingText:'<strong>Housing</strong> status set',
+      sigRateText:'<strong>Rate</strong> within range',
+      sigLoanBurdenText:'<strong>Loan burden</strong> calculated',
+      sigCreditText:'<strong>Credit history</strong> reviewed',
+      resultApproved:'Approved', resultRejected:'Declined',
+      resultApprovedMsg:'Great news! Based on the details provided, this application looks good and is recommended for approval.',
+      resultRejectedMsg:'Unfortunately, this application does not meet the current criteria. Consider reducing the loan amount, lowering the interest rate, or improving the credit history.',
+      newApp:'New application',
+      whyResult:'Why This Result?', whatAffected:'What Affected Your Result',
+      howToImprove:'How to Improve',
+      cfSubApproved:'If these values change, the loan may be declined:',
+      cfSubRejected:'Try these adjustments to improve your chances of approval:',
+      cfRejTitle:'What Could Lead to Rejection', cfApprTitle:'How to Get Approved',
+      noAltSuggestions:'No alternative suggestions found. Try adjusting the income or loan amount.',
+      footerNote:'The approval score above is a live preview only. The final loan decision is made by our loan assessment system once you submit.',
+      voiceWelcomeDesc:"This assistant will guide you through your loan application step by step. You can speak your answers or type them directly into the fields below.",
+      voiceApplicantNameLabel:"Applicant's name",
+      voiceReviewIntro:'Click on any field below to make changes, or click Submit to check the loan.',
+      voiceProcessingMsg:'Checking your application...',
+      voiceResultTitle:'Application Checked Successfully',
+      voiceResultDesc:'Check the panel on the right to see your loan result, what affected the decision, and tips to improve.',
+      voiceRestartWizard:'Restart',
+      sigDefaultRecord:'Default on record', sigNoRecord:'No record',
+      cfAnnualIncome:'Annual Income:', cfInterestRate:'Interest Rate:',
+      cfLoanRatio:'Loan/Income Ratio:', cfDefaults:'Defaults:', altOption:'Alternative Option',
+      sigRateSuffix:'% interest', sigPercentSuffix:'% of income',
+      reviewName:'Name', reviewAge:'Age', reviewEmail:'Email', reviewPhone:'Phone',
+      reviewIncome:'Income', reviewHousing:'Housing', reviewRate:'Interest Rate',
+      reviewLoanRatio:'Loan/Income', reviewDefaults:'Defaults',
+      reviewDefaultYes:'Has Defaulted', reviewDefaultNo:'No Record',
+      hearResult:'Hear Result',
+    },
+    hi: {
+      brandTag:'लोन पोर्टल', statusOnline:'ऑनलाइन · v1.0',
+      eyebrow:'लोन आवेदन', pageTitle:'लोन के लिए आवेदन करें',
+      pageSub:'नीचे आवेदक की जानकारी भरें। दाईं ओर का सारांश अपने आप अपडेट होगा।',
+      tabForm:'📋 फ़ॉर्म मोड', tabVoice:'🎤 वॉइस असिस्टेंट',
+      sec1:'आवेदक', sec2:'वित्तीय विवरण', sec3:'क्रेडिट इतिहास',
+      labelName:'पूरा नाम', labelAge:'आयु', labelEmail:'ईमेल', labelPhone:'फ़ोन',
+      labelIncome:'वार्षिक आय', incomeHint:'(सकल, ₹ में)',
+      labelOwnership:'घर का स्वामित्व', ownershipPlaceholder:'स्थिति चुनें',
+      ownershipRent:'किराये पर', ownershipOwn:'स्वामित्व', ownershipMortgage:'बंधक', ownershipOther:'अन्य',
+      labelRate:'ब्याज दर', rateHint:'(प्रस्तावित)',
+      labelPercent:'लोन राशि', percentHint:'(आय के % में, जैसे 0.18 = 18%)',
+      labelDefault:'पिछले लोन में चूक का रिकॉर्ड', defaultNo:'कोई रिकॉर्ड नहीं', defaultYes:'चूक हुई है',
+      quickEstimates:'त्वरित अनुमान',
+      estLoanAmount:'अनुमानित लोन राशि', estEmi:'अनुमानित मासिक EMI (5 वर्ष)', monthlyDebt:'मासिक वित्त-आय अनुपात',
+      submitBtn:'लोन जाँचें', clearForm:'फॉर्म साफ़ करें',
+      privacyNote:'आपकी जानकारी हमारी लोन निर्णय प्रणाली द्वारा समीक्षा की जाएगी। सभी जानकारी सुरक्षित रखी जाती है।',
+      voiceProgress:'वॉइस असिस्टेंट प्रगति',
+      voiceBack:'← वापस', voiceContinue:'जारी रखें', voiceSubmit:'सबमिट करें', voiceDone:'हो गया', voiceRestart:'पुनः शुरू करें',
+      voiceSpeakBtn:'उत्तर बोलें', voiceListening:'सुन रहा है...',
+      voiceAnswersSoFar:'अब तक के उत्तर',
+      panelEyebrow:'लोन सारांश', panelTitle:'आपकी प्रोफाइल',
+      gaugeLabel:'अनुमोदन स्कोर', progressLabel:'आवेदन प्रगति',
+      sigIncomeText:'<strong>आय</strong> दर्ज',
+      sigHousingText:'<strong>आवास</strong> स्थिति सेट',
+      sigRateText:'<strong>ब्याज दर</strong> सीमा में',
+      sigLoanBurdenText:'<strong>लोन भार</strong> गणना',
+      sigCreditText:'<strong>क्रेडिट इतिहास</strong> समीक्षित',
+      resultApproved:'स्वीकृत', resultRejected:'अस्वीकृत',
+      resultApprovedMsg:'बधाई! दी गई जानकारी के आधार पर, यह आवेदन अच्छा लगता है और अनुमोदन के लिए अनुशंसित है।',
+      resultRejectedMsg:'दुर्भाग्यवश, यह आवेदन वर्तमान मानदंडों को पूरा नहीं करता। लोन राशि कम करने, ब्याज दर घटाने या क्रेडिट इतिहास सुधारने पर विचार करें।',
+      newApp:'नया आवेदन',
+      whyResult:'यह परिणाम क्यों?', whatAffected:'आपके परिणाम को क्या प्रभावित किया',
+      howToImprove:'कैसे सुधारें',
+      cfSubApproved:'यदि ये मूल्य बदलते हैं, तो लोन अस्वीकृत हो सकता है:',
+      cfSubRejected:'अनुमोदन की संभावना सुधारने के लिए इन्हें आज़माएं:',
+      cfRejTitle:'अस्वीकृति का कारण क्या हो सकता है', cfApprTitle:'स्वीकृति कैसे पाएं',
+      noAltSuggestions:'कोई वैकल्पिक सुझाव नहीं मिला। आय या लोन राशि बदलने का प्रयास करें।',
+      footerNote:'उपर दिखाया गया स्कोर केवल पूर्वावलोकन है। अंतिम निर्णय सबमिट करने के बाद हमारी प्रणाली द्वारा किया जाता है।',
+      voiceWelcomeDesc:'यह असिस्टेंट आपको लोन आवेदन चरण दर चरण भरने में मदद करेगा। आप उत्तर बोल सकते हैं या सीधे फ़ील्ड में टाइप कर सकते हैं।',
+      voiceApplicantNameLabel:'आवेदक का नाम',
+      voiceReviewIntro:'नीचे दिए गए किसी भी फ़ील्ड पर क्लिक करके बदलें, या लोन जाँचने के लिए सबमिट करें।',
+      voiceProcessingMsg:'आपका आवेदन जाँचा जा रहा है...',
+      voiceResultTitle:'आवेदन सफलतापूर्वक जाँचा गया',
+      voiceResultDesc:'दाईं ओर के पैनल में अपना लोन परिणाम, निर्णय का कारण और सुधार के सुझाव देखें।',
+      voiceRestartWizard:'पुनः शुरू करें',
+      sigDefaultRecord:'चूक का रिकॉर्ड है', sigNoRecord:'कोई रिकॉर्ड नहीं',
+      cfAnnualIncome:'वार्षिक आय:', cfInterestRate:'ब्याज दर:',
+      cfLoanRatio:'लोन/आय अनुपात:', cfDefaults:'चूक:', altOption:'वैकल्पिक विकल्प',
+      sigRateSuffix:'% ब्याज', sigPercentSuffix:'% आय का',
+      reviewName:'नाम', reviewAge:'आयु', reviewEmail:'ईमेल', reviewPhone:'फ़ोन',
+      reviewIncome:'आय', reviewHousing:'आवास', reviewRate:'ब्याज दर',
+      reviewLoanRatio:'लोन/आय', reviewDefaults:'चूक',
+      reviewDefaultYes:'चूक हुई है', reviewDefaultNo:'कोई रिकॉर्ड नहीं',
+      hearResult:'परिणाम सुनें',
+    },
+    mr: {
+      brandTag:'लोन पोर्टल', statusOnline:'ऑनलाइन · v1.0',
+      eyebrow:'कर्ज अर्ज', pageTitle:'कर्जासाठी अर्ज करा',
+      pageSub:'खाली अर्जदाराची माहिती भरा. उजव्या बाजूचा सारांश आपोआप अपडेट होईल.',
+      tabForm:'📋 फॉर्म मोड', tabVoice:'🎤 व्हॉइस असिस्टंट',
+      sec1:'अर्जदार', sec2:'आर्थिक माहिती', sec3:'क्रेडिट इतिहास',
+      labelName:'पूर्ण नाव', labelAge:'वय', labelEmail:'ईमेल', labelPhone:'फोन',
+      labelIncome:'वार्षिक उत्पन्न', incomeHint:'(एकूण, ₹ मध्ये)',
+      labelOwnership:'घराची मालकी', ownershipPlaceholder:'स्थिती निवडा',
+      ownershipRent:'भाड्याने', ownershipOwn:'स्वतःच्या मालकीचे', ownershipMortgage:'गहाण', ownershipOther:'इतर',
+      labelRate:'व्याज दर', rateHint:'(प्रस्तावित)',
+      labelPercent:'कर्ज रक्कम', percentHint:'(उत्पन्नाच्या %, उदा. 0.18 = 18%)',
+      labelDefault:'मागील कर्जात थकबाकीची नोंद', defaultNo:'कोणतीही नोंद नाही', defaultYes:'थकबाकी झाली आहे',
+      quickEstimates:'त्वरित अंदाज',
+      estLoanAmount:'अंदाजित कर्ज रक्कम', estEmi:'अंदाजित मासिक EMI (5 वर्षे)', monthlyDebt:'मासिक कर्ज-उत्पन्न गुणोत्तर',
+      submitBtn:'माझे कर्ज तपासा', clearForm:'फॉर्म साफ करा',
+      privacyNote:'आपली माहिती आमच्या कर्ज निर्णय प्रणालीद्वारे तपासली जाईल. सर्व माहिती सुरक्षित ठेवली जाते.',
+      voiceProgress:'व्हॉइस असिस्टंट प्रगती',
+      voiceBack:'← मागे', voiceContinue:'पुढे चला', voiceSubmit:'सबमिट करा', voiceDone:'झाले', voiceRestart:'पुन्हा सुरू करा',
+      voiceSpeakBtn:'उत्तर बोला', voiceListening:'एकत आहे...',
+      voiceAnswersSoFar:'आतापर्यंतची उत्तरे',
+      panelEyebrow:'कर्ज सारांश', panelTitle:'आपले प्रोफाइल',
+      gaugeLabel:'मंजूरी स्कोर', progressLabel:'अर्जाची प्रगती',
+      sigIncomeText:'<strong>उत्पन्न</strong> नोंदवले',
+      sigHousingText:'<strong>घराची स्थिती</strong> सेट',
+      sigRateText:'<strong>व्याज दर</strong> मर्यादेत',
+      sigLoanBurdenText:'<strong>कर्ज भार</strong> मोजला',
+      sigCreditText:'<strong>क्रेडिट इतिहास</strong> तपासला',
+      resultApproved:'मंजूर', resultRejected:'नाकारले',
+      resultApprovedMsg:'अभिनंदन! दिलेल्या माहितीच्या आधारे, हा अर्ज चांगला दिसतो आणि मंजुरीसाठी शिफारस केला जातो.',
+      resultRejectedMsg:'दुर्दैवाने, हा अर्ज सध्याच्या निकषांची पूर्तता करत नाही. कर्जाची रक्कम कमी करणे, व्याज दर कमी करणे किंवा क्रेडिट इतिहास सुधारण्याचा विचार करा.',
+      newApp:'नवीन अर्ज',
+      whyResult:'हा निकाल का?', whatAffected:'तुमच्या निकालावर काय परिणाम झाला',
+      howToImprove:'कसे सुधारावे',
+      cfSubApproved:'जर हे मूल्य बदलले तर कर्ज नाकारले जाउ शकते:',
+      cfSubRejected:'मंजुरीची शक्यता सुधारण्यासाठी हे प्रयत्न करा:',
+      cfRejTitle:'नाकारण्याचे कारण काय असू शकते', cfApprTitle:'मंजुरी कशी मिळवावी',
+      noAltSuggestions:'कोणतेही पर्यायी सुझाव सापडले नाही. उत्पन्न किंवा कर्ज रक्कम बदलण्याचा प्रयत्न करा.',
+      footerNote:'वरील स्कोर केवळ पूर्वावलोकन आहे. अंतिम निर्णय सबमिट केल्यानंतर आमच्या प्रणालीद्वारे घेतला जातो.',
+      voiceWelcomeDesc:'हा असिस्टंट तुम्हाला कर्ज अर्ज टप्प्याटप्याने भरण्यात मदत करेल. तुम्ही उत्तरे बोलू शकता किंवा थेट फील्डमध्ये टाइप करू शकता.',
+      voiceApplicantNameLabel:'अर्जदाराचे नाव',
+      voiceReviewIntro:'खाली दिलेल्या कोणत्याही फील्डवर क्लिक करून बदला, किंवा कर्ज तपासण्यासाठी सबमिट करा.',
+      voiceProcessingMsg:'तुमचा अर्ज तपासला जात आहे...',
+      voiceResultTitle:'अर्ज यशस्विरित्या तपासला',
+      voiceResultDesc:'उजव्या बाजूच्या प्यानेलमध्ये तुमचा कर्ज निकाल, निर्णयावर काय परिणाम झाला आणि सुधारणेच्या टिप्स पहा.',
+      voiceRestartWizard:'पुन्हा सुरू करा',
+      sigDefaultRecord:'थकबाकीची नोंद आहे', sigNoRecord:'कोणतीही नोंद नाही',
+      cfAnnualIncome:'वार्षिक उत्पन्न:', cfInterestRate:'व्याज दर:',
+      cfLoanRatio:'कर्ज/उत्पन्न गुणोत्तर:', cfDefaults:'थकबाकी:', altOption:'पर्यायी पर्याय',
+      sigRateSuffix:'% व्याज', sigPercentSuffix:'% उत्पन्नाचे',
+      reviewName:'नाव', reviewAge:'वय', reviewEmail:'ईमेल', reviewPhone:'फोन',
+      reviewIncome:'उत्पन्न', reviewHousing:'घर', reviewRate:'व्याज दर',
+      reviewLoanRatio:'कर्ज/उत्पन्न', reviewDefaults:'थकबाकी',
+      reviewDefaultYes:'थकबाकी झाली आहे', reviewDefaultNo:'कोणतीही नोंद नाही',
+      hearResult:'निकाल ऐका',
+    }
+  };
+
+  function getVoiceSteps(lang) {
+    const s = {
+      en: [
+        {id:0,question:"Welcome to the Credence Loan Assistant. Let's fill in the loan application together. First, what is the applicant's full name?",type:"text",field:"name",placeholder:"e.g. Asha Mehta",speak:"Welcome to the Credence Loan Assistant. Let's fill in the loan application together. First, what is the applicant's full name?",validate:(v)=>v&&v.trim().length>0,errorMsg:"Please enter the applicant's name."},
+        {id:1,question:"What is the applicant's age?",type:"number",field:"age",placeholder:"e.g. 29",speak:"What is the applicant's age?",validate:(v)=>v&&Number(v)>=18&&Number(v)<=100,errorMsg:"Please enter a valid age between 18 and 100."},
+        {id:2,question:"What is the applicant's email address?",type:"email",field:"email",placeholder:"e.g. asha@email.com",speak:"What is the applicant's email address?",validate:(v)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),errorMsg:"Please enter a valid email address."},
+        {id:3,question:"What is the applicant's contact phone number?",type:"tel",field:"phone",placeholder:"e.g. 9876543210",speak:"What is the applicant's contact phone number?",validate:(v)=>v&&v.trim().length>=7,errorMsg:"Please enter a valid contact phone number."},
+        {id:4,question:"What is the gross annual income of the applicant in Rupees?",type:"number",field:"income",placeholder:"e.g. 850000",speak:"What is the gross annual income of the applicant in Rupees?",validate:(v)=>v&&Number(v)>0,errorMsg:"Please enter a valid annual income."},
+        {id:5,question:"What is the applicant's housing status? You can say Renting, Own outright, Mortgage, or Other.",type:"select",field:"ownership",speak:"What is the applicant's housing status?",validate:(v)=>["RENT","OWN","MORTGAGE","OTHER"].includes(v),errorMsg:"Please select a housing status."},
+        {id:6,question:"What interest rate is being offered for this loan?",type:"number",step:"0.01",field:"rate",placeholder:"e.g. 11.5",speak:"What interest rate is being offered for this loan?",validate:(v)=>v!==""&&Number(v)>=0,errorMsg:"Please enter the offered interest rate."},
+        {id:7,question:"What portion of the annual income is the loan amount? Enter as a decimal (e.g., 0.20 means 20% of income).",type:"number",step:"0.01",field:"percent",placeholder:"e.g. 0.18",speak:"What portion of the annual income is the loan amount? For example, say point 2 for 20 percent.",validate:(v)=>v!==""&&Number(v)>=0&&Number(v)<=1,errorMsg:"Please enter a value between 0.0 and 1.0."},
+        {id:8,question:"Does the applicant have any record of previous loan default? Say Yes if they have defaulted, or No if there is no record.",type:"binary",field:"default",speak:"Does the applicant have any previous loan default? Say Yes or No.",validate:(v)=>["YES","NO"].includes(v),errorMsg:"Please indicate if there is a default record."},
+        {id:9,question:"All done! Please review the details below. Click any field to make changes, or click Submit to check the loan.",type:"review",speak:"All details collected. Review below and submit.",validate:()=>true},
+        {id:10,question:"Checking your application. Please wait...",type:"processing",speak:"Checking your application. Please wait.",validate:()=>true},
+        {id:11,question:"Done! Check the panel on the right to see your loan result.",type:"result",speak:"Done! Check the panel on the right to see your loan result.",validate:()=>true}
+      ],
+      hi: [
+        {id:0,question:"क्रेडेंस लोन असिस्टेंट में आपका स्वागत है। आइए लोन आवेदन एक साथ भरें। पहले, आवेदक का पूरा नाम क्या है?",type:"text",field:"name",placeholder:"जैसे: आशा मेहता",speak:"क्रेडेंस लोन असिस्टेंट में आपका स्वागत है। पहले, आवेदक का पूरा नाम क्या है?",validate:(v)=>v&&v.trim().length>0,errorMsg:"कृपया आवेदक का नाम दर्ज करें।"},
+        {id:1,question:"आवेदक की आयु क्या है?",type:"number",field:"age",placeholder:"जैसे: 29",speak:"आवेदक की आयु क्या है?",validate:(v)=>v&&Number(v)>=18&&Number(v)<=100,errorMsg:"कृपया 18 से 100 के बीच एक वैध आयु दर्ज करें।"},
+        {id:2,question:"आवेदक का ईमेल पता क्या है?",type:"email",field:"email",placeholder:"जैसे: asha@email.com",speak:"आवेदक का ईमेल पता क्या है?",validate:(v)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),errorMsg:"कृपया एक वैध ईमेल पता दर्ज करें।"},
+        {id:3,question:"आवेदक का संपर्क फ़ोन नंबर क्या है?",type:"tel",field:"phone",placeholder:"जैसे: 9876543210",speak:"आवेदक का संपर्क फ़ोन नंबर क्या है?",validate:(v)=>v&&v.trim().length>=7,errorMsg:"कृपया एक वैध संपर्क फ़ोन नंबर दर्ज करें।"},
+        {id:4,question:"आवेदक की वार्षिक सकल आय रुपये में क्या है?",type:"number",field:"income",placeholder:"जैसे: 850000",speak:"आवेदक की वार्षिक सकल आय रुपये में क्या है?",validate:(v)=>v&&Number(v)>0,errorMsg:"कृपया एक वैध वार्षिक आय दर्ज करें।"},
+        {id:5,question:"आवेदक की आवास स्थिति क्या है? आप किराये पर, स्वामित्व, बंधक, या अन्य कह सकते हैं।",type:"select",field:"ownership",speak:"आवेदक की आवास स्थिति क्या है?",validate:(v)=>["RENT","OWN","MORTGAGE","OTHER"].includes(v),errorMsg:"कृपया एक आवास स्थिति चुनें।"},
+        {id:6,question:"इस लोन के लिए कौन सी ब्याज दर प्रस्तावित है?",type:"number",step:"0.01",field:"rate",placeholder:"जैसे: 11.5",speak:"इस लोन के लिए कौन सी ब्याज दर प्रस्तावित है?",validate:(v)=>v!==""&&Number(v)>=0,errorMsg:"कृपया प्रस्तावित ब्याज दर दर्ज करें।"},
+        {id:7,question:"वार्षिक आय का लोन राशि का कितना हिस्सा है? दशमलव में बताएं — जैसे 0.20 मतलब 20 प्रतिशत।",type:"number",step:"0.01",field:"percent",placeholder:"जैसे: 0.18",speak:"वार्षिक आय का लोन का कितना हिस्सा है? दशमलव में बताएं।",validate:(v)=>v!==""&&Number(v)>=0&&Number(v)<=1,errorMsg:"कृपया 0.0 और 1.0 के बीच एक मूल्य दर्ज करें।"},
+        {id:8,question:"क्या आवेदक का पिछले लोन में चूक का कोई रिकॉर्ड है? हाँ या नहीं बोलें।",type:"binary",field:"default",speak:"क्या आवेदक का पिछले लोन में चूक का कोई रिकॉर्ड है? हाँ या नहीं बोलें।",validate:(v)=>["YES","NO"].includes(v),errorMsg:"कृपया बताएं कि चूक का कोई रिकॉर्ड है या नहीं।"},
+        {id:9,question:"सब ठीक है! नीचे दिए गए विवरणों की समीक्षा करें। किसी भी फ़ील्ड पर क्लिक करके बदलें, या लोन जाँचने के लिए सबमिट करें।",type:"review",speak:"सब ठीक है। विवरण देखें और सबमिट करें।",validate:()=>true},
+        {id:10,question:"आपका आवेदन जाँचा जा रहा है। कृपया प्रतीक्षा करें...",type:"processing",speak:"आपका आवेदन जाँचा जा रहा है। कृपया प्रतीक्षा करें।",validate:()=>true},
+        {id:11,question:"हो गया! दाईं ओर के पैनल में अपना लोन परिणाम देखें।",type:"result",speak:"हो गया। दाईं ओर के पैनल में अपना लोन परिणाम देखें।",validate:()=>true}
+      ],
+      mr: [
+        {id:0,question:"क्रेडेंस लोन असिस्टंटमध्ये आपले स्वागत आहे. चला एकत्र कर्ज अर्ज भरूया. प्रथम, अर्जदाराचे पूर्ण नाव काय आहे?",type:"text",field:"name",placeholder:"उदा: आशा मेहता",speak:"क्रेडेंस लोन असिस्टंटमध्ये आपले स्वागत आहे. प्रथम, अर्जदाराचे पूर्ण नाव काय आहे?",validate:(v)=>v&&v.trim().length>0,errorMsg:"कृपया अर्जदाराचे नाव द्या."},
+        {id:1,question:"अर्जदाराचे वय किती आहे?",type:"number",field:"age",placeholder:"उदा: 29",speak:"अर्जदाराचे वय किती आहे?",validate:(v)=>v&&Number(v)>=18&&Number(v)<=100,errorMsg:"कृपया 18 ते 100 दरम्यान वैध वय द्या."},
+        {id:2,question:"अर्जदाराचा ईमेल पत्ता काय आहे?",type:"email",field:"email",placeholder:"उदा: asha@email.com",speak:"अर्जदाराचा ईमेल पत्ता काय आहे?",validate:(v)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),errorMsg:"कृपया वैध ईमेल पत्ता द्या."},
+        {id:3,question:"अर्जदाराचा संपर्क फोन नंबर काय आहे?",type:"tel",field:"phone",placeholder:"उदा: 9876543210",speak:"अर्जदाराचा संपर्क फोन नंबर काय आहे?",validate:(v)=>v&&v.trim().length>=7,errorMsg:"कृपया वैध संपर्क फोन नंबर द्या."},
+        {id:4,question:"अर्जदाराचे वार्षिक एकूण उत्पन्न रुपयांमध्ये किती आहे?",type:"number",field:"income",placeholder:"उदा: 850000",speak:"अर्जदाराचे वार्षिक एकूण उत्पन्न रुपयांमध्ये किती आहे?",validate:(v)=>v&&Number(v)>0,errorMsg:"कृपया वैध वार्षिक उत्पन्न द्या."},
+        {id:5,question:"अर्जदाराची घराची स्थिती काय आहे? तुम्ही भाड्याने, स्वतःच्या मालकीचे, गहाण, किंवा इतर सांगू शकता.",type:"select",field:"ownership",speak:"अर्जदाराची घराची स्थिती काय आहे?",validate:(v)=>["RENT","OWN","MORTGAGE","OTHER"].includes(v),errorMsg:"कृपया घराची स्थिती निवडा."},
+        {id:6,question:"या कर्जासाठी कोणता व्याज दर प्रस्तावित आहे?",type:"number",step:"0.01",field:"rate",placeholder:"उदा: 11.5",speak:"या कर्जासाठी कोणता व्याज दर प्रस्तावित आहे?",validate:(v)=>v!==""&&Number(v)>=0,errorMsg:"कृपया प्रस्तावित व्याज दर द्या."},
+        {id:7,question:"वार्षिक उत्पन्नाचा कर्जाची रक्कम किती टक्के आहे? दशांश मध्ये सांगा — उदा. 0.20 म्हणजे 20 टक्के.",type:"number",step:"0.01",field:"percent",placeholder:"उदा: 0.18",speak:"वार्षिक उत्पन्नाचा कर्जाची रक्कम किती टक्के आहे? दशांश मध्ये सांगा.",validate:(v)=>v!==""&&Number(v)>=0&&Number(v)<=1,errorMsg:"कृपया 0.0 ते 1.0 दरम्यान मूल्य द्या."},
+        {id:8,question:"अर्जदाराला मागील कर्जात थकबाकीची कोणती नोंद आहे का? होय किंवा नाही सांगा.",type:"binary",field:"default",speak:"अर्जदाराला थकबाकीची नोंद आहे का? होय किंवा नाही सांगा.",validate:(v)=>["YES","NO"].includes(v),errorMsg:"कृपया थकबाकीची नोंद आहे का ते सांगा."},
+        {id:9,question:"सर्व तयार! खाली दिलेल्या माहितीचे पुनरावलोकन करा. कोणत्याही फील्डवर क्लिक करून बदला, किंवा कर्ज तपासण्यासाठी सबमिट करा.",type:"review",speak:"सर्व तयार. माहिती तपासा आणि सबमिट करा.",validate:()=>true},
+        {id:10,question:"तुमचा अर्ज तपासला जात आहे. कृपया प्रतीक्षा करा...",type:"processing",speak:"तुमचा अर्ज तपासला जात आहे. कृपया प्रतीक्षा करा.",validate:()=>true},
+        {id:11,question:"झाले! उजव्या बाजूच्या प्यानेलमध्ये तुमचा कर्ज निकाल पहा.",type:"result",speak:"झाले. उजव्या बाजूच्या प्यानेलमध्ये तुमचा कर्ज निकाल पहा.",validate:()=>true}
+      ]
+    };
+    return s[lang] || s.en;
+  }
+
+  function applyLanguage(lang) {
+    const t = TRANSLATIONS[lang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) el.textContent = t[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if (t[key] !== undefined) el.innerHTML = t[key];
+    });
+    // Update select options
+    const sel = document.getElementById('ownership');
+    if (sel && sel.options.length >= 5) {
+      sel.options[0].text = t.ownershipPlaceholder;
+      sel.options[1].text = t.ownershipRent;
+      sel.options[2].text = t.ownershipOwn;
+      sel.options[3].text = t.ownershipMortgage;
+      sel.options[4].text = t.ownershipOther;
+    }
+    voiceSteps = getVoiceSteps(lang);
+    updateSignals();
+    if (document.getElementById('voiceModeContainer').style.display !== 'none') {
+      renderVoiceStep();
+    }
+  }
+
+  // ---- Voice Assistant Logic ----
+  let currentVoiceStep = 0;
+  let currentAudio = null;
+  let recognition = null;
+  let isListening = false;
+
+  let voiceSteps = getVoiceSteps('en');
+
+
+  function playTTS(text) {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+    }
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+
+    const btn = document.getElementById('speakQuestionBtn');
+    if (btn) btn.style.color = 'var(--accent-primary)';
+
+    const url = `/tts?text=${encodeURIComponent(text)}&lang=${currentLang === 'hi' ? 'hi' : currentLang === 'mr' ? 'mr' : 'en'}`;
+    const audio = new Audio(url);
+    currentAudio = audio;
+
+    audio.onplay = () => {
+      if (btn) btn.style.color = 'var(--emerald)';
+    };
+
+    audio.onended = () => {
+      if (btn) btn.style.color = 'var(--text-muted)';
+    };
+
+    audio.onerror = () => {
+      console.warn("FastAPI TTS failed, falling back to Web Speech API");
+      showToast("Server TTS offline. Using browser voice fallback.", false);
+      speakBrowserTTS(text, btn);
+    };
+
+    audio.play().catch(() => {
+      // Handles autoplay block
+      speakBrowserTTS(text, btn);
+    });
+  }
+
+  function speakBrowserTTS(text, btn) {
+    if (!window.speechSynthesis) return;
+    const utterance = new SpeechSynthesisUtterance(text);
+    const langMap = { en: 'en-US', hi: 'hi-IN', mr: 'mr-IN' };
+    utterance.lang = langMap[currentLang] || 'en-US';
+    utterance.onstart = () => {
+      if (btn) btn.style.color = 'var(--emerald)';
+    };
+    utterance.onend = () => {
+      if (btn) btn.style.color = 'var(--text-muted)';
+    };
+    utterance.onerror = () => {
+      if (btn) btn.style.color = 'var(--text-muted)';
+    };
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function speakPredictionResult() {
+    if (!lastPredictionResult) return;
+    const approved = String(lastPredictionResult.prediction).toLowerCase() === 'approved';
+    const rate = fields.rate.value || '0';
+    const emi = Math.round(lastPredictionResult.emi || 0).toLocaleString(currentLang === 'en' ? 'en-US' : 'en-IN');
+    
+    let text = "";
+    if (currentLang === 'en') {
+      if (approved) {
+        text = `Loan application is approved. The offered interest rate is ${rate} percent, with an estimated monthly EMI of ${emi} Rupees. Check the summary on the right for details.`;
+      } else {
+        text = `Loan application has been declined. The requested amount does not meet current underwriting criteria. Consider lowering the interest rate or reducing the loan burden.`;
+      }
+    } else if (currentLang === 'hi') {
+      if (approved) {
+        text = `लोन आवेदन स्वीकृत हो गया है। प्रस्तावित ब्याज दर ${rate} प्रतिशत है, और अनुमानित मासिक ईएमआई ${emi} रुपये है। अधिक जानकारी के लिए दाईं ओर का सारांश देखें।`;
+      } else {
+        text = `लोन आवेदन अस्वीकृत कर दिया गया है। यह आवेदन वर्तमान वित्तीय मानदंडों को पूरा नहीं करता है। कृपया लोन राशि कम करने या क्रेडिट इतिहास सुधारने पर विचार करें।`;
+      }
+    } else if (currentLang === 'mr') {
+      if (approved) {
+        text = `कर्ज अर्ज मंजूर झाला आहे. प्रस्तावित व्याज दर ${rate} टक्के आहे, आणि अंदाजित मासिक ईएमआय ${emi} रुपये आहे. अधिक माहितीसाठी उजव्या बाजूचा सारांश पहा.`;
+      } else {
+        text = `कर्ज अर्ज नाकारण्यात आला आहे. हा अर्ज सध्याच्या वित्तीय निकषांची पूर्तता करत नाही. कृपया कर्जाची रक्कम कमी करण्याचा किंवा क्रेडिट इतिहास सुधारण्याचा विचार करा.`;
+      }
+    }
+    playTTS(text);
+  }
+
+  // ---- Speech Recognition ----
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRec();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      isListening = true;
+      document.getElementById('speechIndicator').style.display = 'flex';
+      document.getElementById('micText').textContent = TRANSLATIONS[currentLang].voiceListening;
+      document.getElementById('micBtn').style.background = 'rgba(239, 68, 68, 0.15)';
+      document.getElementById('micBtn').style.color = 'var(--red)';
+      document.getElementById('micBtn').style.borderColor = 'rgba(239, 68, 68, 0.4)';
+    };
+
+    recognition.onend = () => {
+      isListening = false;
+      document.getElementById('speechIndicator').style.display = 'none';
+      document.getElementById('micText').textContent = TRANSLATIONS[currentLang].voiceSpeakBtn;
+      document.getElementById('micBtn').style.background = 'rgba(99, 102, 241, 0.1)';
+      document.getElementById('micBtn').style.color = 'var(--accent-primary)';
+      document.getElementById('micBtn').style.borderColor = 'var(--glass-border)';
+    };
+
+    recognition.onerror = (event) => {
+      console.warn("Speech recognition error:", event.error);
+      showToast(`Speech recognition error: ${event.error}`, true);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      const displayTrans = document.getElementById('speechTranscription');
+      displayTrans.style.display = 'block';
+      displayTrans.textContent = `Spoken: "${transcript}"`;
+      parseSpokenInput(transcript);
+    };
+
+    document.getElementById('micBtn').addEventListener('click', () => {
+      if (isListening) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    });
+  } else {
+    const mic = document.getElementById('micBtn');
+    if (mic) {
+      mic.disabled = true;
+      mic.style.opacity = '0.5';
+      mic.title = 'Speech recognition not supported in this browser.';
+    }
+  }
+
+  function parseSpokenInput(text) {
+    const step = voiceSteps[currentVoiceStep];
+    const cleanText = text.toLowerCase().trim();
+
+    if (step.type === 'text' || step.type === 'email' || step.type === 'tel') {
+      let val = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
+      setVoiceInputValue(val);
+      return;
+    }
+
+    if (step.field === 'ownership') {
+      if (cleanText.includes('rent') || cleanText.includes('renting') ||
+          cleanText.includes('किराय') || cleanText.includes('भाड्या')) {
+        setVoiceInputValue('RENT');
+      } else if (cleanText.includes('own') || cleanText.includes('owned') || cleanText.includes('outright') ||
+                 cleanText.includes('स्वामित्व') || cleanText.includes('स्वतः') || cleanText.includes('मालकी')) {
+        setVoiceInputValue('OWN');
+      } else if (cleanText.includes('mortgage') || cleanText.includes('बंधक') || cleanText.includes('गहाण')) {
+        setVoiceInputValue('MORTGAGE');
+      } else if (cleanText.includes('other') || cleanText.includes('अन्य') || cleanText.includes('इतर')) {
+        setVoiceInputValue('OTHER');
+      } else {
+        showToast(`Could not recognize housing status "${text}". Select manually.`, false);
+      }
+      return;
+    }
+
+    if (step.field === 'default') {
+      if (cleanText.includes('yes') || cleanText.includes('default') || cleanText.includes('has defaulted') ||
+          cleanText.includes('हाँ') || cleanText.includes('हां') || cleanText.includes('चूक') ||
+          cleanText.includes('थकबाकी') || cleanText.includes('होय')) {
+        setVoiceInputValue('YES');
+      } else if (cleanText.includes('no') || cleanText.includes('record') || cleanText.includes('clear') ||
+                 cleanText.includes('नहीं') || cleanText.includes('नाही') || cleanText.includes('नो')) {
+        setVoiceInputValue('NO');
+      } else {
+        showToast(`Could not recognize. Say Yes or No.`, false);
+      }
+      return;
+    }
+
+    if (step.type === 'number') {
+      const parsedNum = parseSpokenNumber(cleanText);
+      if (parsedNum !== null) {
+        setVoiceInputValue(parsedNum);
+      } else {
+        showToast(`Could not parse "${text}" as a number. Enter manually.`, false);
+      }
+    }
+  }
+
+  function parseSpokenNumber(text) {
+    const directMatch = text.replace(/,/g, '').match(/[\d.]+/);
+    if (directMatch && directMatch[0] === text.trim()) {
+      return parseFloat(directMatch[0]);
+    }
+
+    const numberWords = {
+      // English
+      'zero':0,'one':1,'two':2,'three':3,'four':4,'five':5,
+      'six':6,'seven':7,'eight':8,'nine':9,'ten':10,
+      'eleven':11,'twelve':12,'thirteen':13,'fourteen':14,'fifteen':15,
+      'sixteen':16,'seventeen':17,'eighteen':18,'nineteen':19,'twenty':20,
+      'thirty':30,'forty':40,'fifty':50,'sixty':60,'seventy':70,'eighty':80,'ninety':90,
+      // Hindi
+      'शून्य':0,'एक':1,'दो':2,'तीन':3,'चार':4,'पाँच':5,'पांच':5,
+      'छह':6,'छ़ः':6,'सात':7,'आठ':8,'नौ':9,'दस':10,
+      'ग्यारह':11,'बारह':12,'तेरह':13,'चौदह':14,'पंद्रह':15,
+      'सोलह':16,'सत्रह':17,'अठारह':18,'उन्नीस':19,'बीस':20,
+      'तीस':30,'चालीस':40,'पचास':50,'साठ':60,'सत्तर':70,'अस्सी':80,'नब्बे':90,
+      // Marathi (unique words only)
+      'दोन':2,'पाच':5,'सहा':6,'नओ':9,'दहा':10,
+      'अकरा':11,'बारा':12,'तेरा':13,'चौदा':14,'पंधरा':15,
+      'सोळा':16,'सतरा':17,'अठरा':18,'एकोणीस':19,'वीस':20,
+      'चाळीस':40,'पन्नास':50,'ऐंशी':80,'नव्वद':90
+    };
+
+    const multipliers = {
+      'lakh':100000,'lakhs':100000,'thousand':1000,'thousands':1000,
+      'hundred':100,'hundreds':100,'crore':10000000,'crores':10000000,'percent':1,
+      // Hindi/Marathi shared
+      'लाख':100000,'हज़ार':1000,'हजार':1000,'सौ':100,
+      'करोड़':10000000,'करोड':10000000,
+      // Marathi specific
+      'शंभर':100,'कोटी':10000000
+    };
+
+    let words = text.split(/\s+/);
+    let total = 0;
+    let numberBuffer = 0;
+    let foundNumber = false;
+
+    for (let i = 0; i < words.length; i++) {
+      const w = words[i].replace(/[^a-z0-9.]/g, '');
+      if (!w) continue;
+
+      if (!isNaN(w)) {
+        numberBuffer = parseFloat(w);
+        foundNumber = true;
+        continue;
+      }
+
+      if (numberWords[w] !== undefined) {
+        numberBuffer += numberWords[w];
+        foundNumber = true;
+        continue;
+      }
+
+      if (multipliers[w] !== undefined) {
+        let mult = multipliers[w];
+        if (w === 'percent' && currentVoiceStep === 7) {
+          mult = 0.01;
+        }
+        if (foundNumber) {
+          total += numberBuffer * mult;
+          numberBuffer = 0;
+          foundNumber = false;
+        } else {
+          total += 1 * mult;
+        }
+        continue;
+      }
+
+      if (w === 'point' || w === 'dot') {
+        if (i + 1 < words.length && !isNaN(words[i+1])) {
+          numberBuffer = parseFloat(numberBuffer + '.' + words[i+1]);
+          i++;
+          foundNumber = true;
+        } else if (i + 1 < words.length && numberWords[words[i+1]] !== undefined) {
+          numberBuffer = parseFloat(numberBuffer + '.' + numberWords[words[i+1]]);
+          i++;
+          foundNumber = true;
+        }
+      }
+    }
+
+    if (foundNumber) {
+      total += numberBuffer;
+    }
+
+    return total > 0 || foundNumber ? total : null;
+  }
+
+  function setVoiceInputValue(val) {
+    const step = voiceSteps[currentVoiceStep];
+    if (step.field === 'default') {
+      if (val === 'YES') {
+        document.getElementById('default-yes').checked = true;
+        document.getElementById('default-no').checked = false;
+      } else {
+        document.getElementById('default-yes').checked = false;
+        document.getElementById('default-no').checked = true;
+      }
+      document.getElementById('default-yes').dispatchEvent(new Event('change'));
+    } else {
+      const inputEl = fields[step.field] || document.getElementById(step.field);
+      if (inputEl) {
+        inputEl.value = val;
+        inputEl.dispatchEvent(new Event('input'));
+        inputEl.dispatchEvent(new Event('change'));
+      }
+    }
+    renderVoiceStepInput();
+    updateVoiceTags();
+  }
+
+  function renderVoiceStep() {
+    const step = voiceSteps[currentVoiceStep];
+    const progressPct = ((currentVoiceStep + 1) / voiceSteps.length) * 100;
+    document.getElementById('voiceStepProgressText').textContent = `Step ${currentVoiceStep + 1} of ${voiceSteps.length}`;
+    document.getElementById('voiceStepProgressBar').style.width = `${progressPct}%`;
+    document.getElementById('voiceQuestionText').textContent = step.question;
+    document.getElementById('voiceBackBtn').disabled = (currentVoiceStep === 0);
+
+    const t = TRANSLATIONS[currentLang];
+    const nextBtnText = document.querySelector('#voiceNextBtn .btn-text');
+    if (currentVoiceStep === voiceSteps.length - 3) {
+      nextBtnText.textContent = t.voiceSubmit;
+    } else if (currentVoiceStep >= voiceSteps.length - 2) {
+      nextBtnText.textContent = t.voiceDone;
+    } else {
+      nextBtnText.textContent = t.voiceContinue;
+    }
+
+    document.getElementById('speechTranscription').style.display = 'none';
+    document.getElementById('speechTranscription').textContent = '';
+
+    renderVoiceStepInput();
+    updateVoiceTags();
+
+    // Autoplay TTS for current question
+    if (currentVoiceStep < 10) {
+      setTimeout(() => {
+        if (currentVoiceStep > 0) {
+          playTTS(step.speak);
+        }
+      }, 300);
+    }
+  }
+
+  function renderVoiceStepInput() {
+    const step = voiceSteps[currentVoiceStep];
+    const container = document.getElementById('voiceInputWrapper');
+    container.innerHTML = '';
+
+    const speechControl = document.getElementById('voiceSpeechControl');
+    if (step.type === 'review' || step.type === 'processing' || step.type === 'result') {
+      speechControl.style.display = 'none';
+    } else {
+      speechControl.style.display = 'block';
+    }
+
+    const getVal = () => {
+      if (step.field === 'default') {
+        return getDefaultValue();
+      }
+      const el = fields[step.field] || document.getElementById(step.field);
+      return el ? el.value : '';
+    };
+
+    const currentVal = getVal();
+
+    if (step.id === 0) {
+      const t = TRANSLATIONS[currentLang];
+      container.innerHTML = `
+        <div style="text-align: center; padding: 20px 0 10px;">
+          <p style="font-size: 14.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;">
+            ${t.voiceWelcomeDesc}
+          </p>
+          <div class="field" style="max-width: 320px; margin: 0 auto; text-align: left;">
+            <label for="voice_name">${t.voiceApplicantNameLabel}</label>
+            <input type="text" id="voice_name" placeholder="Asha Mehta" value="${currentVal}">
+          </div>
+        </div>
+      `;
+      document.getElementById('voice_name').addEventListener('input', (e) => {
+        fields.name.value = e.target.value;
+        fields.name.dispatchEvent(new Event('input'));
+      });
+      return;
+    }
+
+    if (step.type === 'text' || step.type === 'email' || step.type === 'tel') {
+      container.innerHTML = `
+        <div class="field" style="max-width: 380px; margin: 0 auto;">
+          <label for="voice_input_${step.field}">${step.question.replace(/\?/g, '')}</label>
+          <input type="${step.type}" id="voice_input_${step.field}" placeholder="${step.placeholder}" value="${currentVal}">
+        </div>
+      `;
+      const inputEl = document.getElementById(`voice_input_${step.field}`);
+      inputEl.addEventListener('input', (e) => {
+        const formEl = fields[step.field];
+        if (formEl) {
+          formEl.value = e.target.value;
+          formEl.dispatchEvent(new Event('input'));
+        }
+      });
+      inputEl.focus();
+    } else if (step.type === 'number') {
+      container.innerHTML = `
+        <div class="field" style="max-width: 380px; margin: 0 auto;">
+          <label for="voice_input_${step.field}">${step.question.replace(/\?/g, '')}</label>
+          <div class="input-wrap ${step.field === 'income' ? 'has-prefix' : ''}">
+            ${step.field === 'income' ? '<span class="prefix">₹</span>' : ''}
+            <input type="number" step="${step.step || '1'}" id="voice_input_${step.field}" placeholder="${step.placeholder}" value="${currentVal}">
+            ${step.field === 'rate' ? '<span class="suffix">%</span>' : ''}
+            ${step.field === 'percent' ? '<span class="suffix">ratio</span>' : ''}
+          </div>
+        </div>
+      `;
+      const inputEl = document.getElementById(`voice_input_${step.field}`);
+      inputEl.addEventListener('input', (e) => {
+        const formEl = fields[step.field];
+        if (formEl) {
+          formEl.value = e.target.value;
+          formEl.dispatchEvent(new Event('input'));
+        }
+      });
+      inputEl.focus();
+    } else if (step.type === 'select') {
+      const t = TRANSLATIONS[currentLang];
+      let optionsHtml = `<option value="" disabled ${!currentVal ? 'selected' : ''}>${t.ownershipPlaceholder}</option>`;
+      const optList = [
+        { value: "RENT", label: t.ownershipRent },
+        { value: "OWN", label: t.ownershipOwn },
+        { value: "MORTGAGE", label: t.ownershipMortgage },
+        { value: "OTHER", label: t.ownershipOther }
+      ];
+      optList.forEach(opt => {
+        optionsHtml += `<option value="${opt.value}" ${currentVal === opt.value ? 'selected' : ''}>${opt.label}</option>`;
+      });
+      container.innerHTML = `
+        <div class="field" style="max-width: 380px; margin: 0 auto;">
+          <label for="voice_input_${step.field}">${step.question.replace(/\?/g, '')}</label>
+          <select id="voice_input_${step.field}">
+            ${optionsHtml}
+          </select>
+        </div>
+      `;
+      const selectEl = document.getElementById(`voice_input_${step.field}`);
+      selectEl.addEventListener('change', (e) => {
+        const formEl = fields[step.field];
+        if (formEl) {
+          formEl.value = e.target.value;
+          formEl.dispatchEvent(new Event('change'));
+        }
+      });
+    } else if (step.type === 'binary') {
+      const t = TRANSLATIONS[currentLang];
+      container.innerHTML = `
+        <div class="field" style="max-width: 380px; margin: 0 auto;">
+          <label>${step.question.replace(/\?/g, '')}</label>
+          <div class="segmented" style="margin-top: 8px;">
+            <input type="radio" name="voice_default" id="voice_default_no" ${currentVal === 'NO' ? 'checked' : ''}>
+            <label for="voice_default_no">${t.defaultNo}</label>
+            <input type="radio" name="voice_default" id="voice_default_yes" ${currentVal === 'YES' ? 'checked' : ''}>
+            <label for="voice_default_yes">${t.defaultYes}</label>
+          </div>
+        </div>
+      `;
+      document.getElementById('voice_default_no').addEventListener('change', () => {
+        document.getElementById('default-no').checked = true;
+        document.getElementById('default-no').dispatchEvent(new Event('change'));
+      });
+      document.getElementById('voice_default_yes').addEventListener('change', () => {
+        document.getElementById('default-yes').checked = true;
+        document.getElementById('default-yes').dispatchEvent(new Event('change'));
+      });
+    } else if (step.type === 'review') {
+      const t = TRANSLATIONS[currentLang];
+      container.innerHTML = `
+        <div style="padding: 10px 0;">
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px;">
+            ${t.voiceReviewIntro}
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12.5px;">
+            <div style="cursor: pointer; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);" onclick="jumpToVoiceStep(0)"><strong>${t.reviewName}:</strong> ${fields.name.value || '—'}</div>
+            <div style="cursor: pointer; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);" onclick="jumpToVoiceStep(1)"><strong>${t.reviewAge}:</strong> ${fields.age.value || '—'}</div>
+            <div style="cursor: pointer; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);" onclick="jumpToVoiceStep(2)"><strong>${t.reviewEmail}:</strong> ${fields.email.value || '—'}</div>
+            <div style="cursor: pointer; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);" onclick="jumpToVoiceStep(3)"><strong>${t.reviewPhone}:</strong> ${fields.phone.value || '—'}</div>
+            <div style="cursor: pointer; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);" onclick="jumpToVoiceStep(4)"><strong>${t.reviewIncome}:</strong> ₹${Number(fields.income.value || 0).toLocaleString('en-IN')}</div>
+            <div style="cursor: pointer; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);" onclick="jumpToVoiceStep(5)"><strong>${t.reviewHousing}:</strong> ${fields.ownership.value || '—'}</div>
+            <div style="cursor: pointer; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);" onclick="jumpToVoiceStep(6)"><strong>${t.reviewRate}:</strong> ${fields.rate.value || '—'}%</div>
+            <div style="cursor: pointer; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);" onclick="jumpToVoiceStep(7)"><strong>${t.reviewLoanRatio}:</strong> ${fields.percent.value || '—'}</div>
+            <div style="cursor: pointer; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); grid-column: span 2;" onclick="jumpToVoiceStep(8)"><strong>${t.reviewDefaults}:</strong> ${getDefaultValue() === 'YES' ? t.reviewDefaultYes : t.reviewDefaultNo}</div>
+          </div>
+        </div>
+      `;
+    } else if (step.type === 'processing') {
+      const t = TRANSLATIONS[currentLang];
+      container.innerHTML = `
+        <div style="text-align: center; padding: 40px 10px;">
+          <div class="btn-spinner" style="display: block; width: 40px; height: 40px; border-width: 3px; margin: 0 auto 20px;"></div>
+          <p style="font-size: 15px; color: var(--text-primary);">
+            ${t.voiceProcessingMsg}
+          </p>
+        </div>
+      `;
+    } else if (step.type === 'result') {
+      const t = TRANSLATIONS[currentLang];
+      container.innerHTML = `
+        <div style="text-align: center; padding: 30px 10px;">
+          <div style="width: 54px; height: 54px; border-radius: 50%; background: var(--emerald-glow); color: var(--emerald); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 0 15px var(--emerald);">
+            <svg viewBox="0 0 24 24" fill="none" style="width: 28px; height: 28px; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <p style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
+            ${t.voiceResultTitle}
+          </p>
+          <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; max-width: 40ch; margin: 0 auto 24px;">
+            ${t.voiceResultDesc}
+          </p>
+          <button type="button" class="reset-btn" onclick="speakPredictionResult()" style="padding: 10px 20px; background: var(--accent-lime); color: var(--bg-dark); font-weight: 700; margin-right: 12px; border: none;">🔊 ${t.hearResult || 'Hear Result'}</button>
+          <button type="button" class="reset-btn" onclick="jumpToVoiceStep(0)" style="padding: 10px 20px;">${t.voiceRestartWizard}</button>
+        </div>
+      `;
+    }
+  }
+
+  function jumpToVoiceStep(stepIdx) {
+    currentVoiceStep = stepIdx;
+    renderVoiceStep();
+  }
+
+  function updateVoiceTags() {
+    const container = document.getElementById('voiceTagsContainer');
+    const panel = document.getElementById('voiceSummaryPanel');
+    container.innerHTML = '';
+    
+    let hasAnyVal = false;
+    
+    const items = [
+      { step: 0, label: 'Name', val: fields.name.value },
+      { step: 1, label: 'Age', val: fields.age.value },
+      { step: 2, label: 'Email', val: fields.email.value },
+      { step: 3, label: 'Phone', val: fields.phone.value },
+      { step: 4, label: 'Income', val: fields.income.value ? '₹' + Number(fields.income.value).toLocaleString('en-IN') : '' },
+      { step: 5, label: 'Housing', val: fields.ownership.value },
+      { step: 6, label: 'Rate', val: fields.rate.value ? fields.rate.value + '%' : '' },
+      { step: 7, label: 'Ratio', val: fields.percent.value },
+      { step: 8, label: 'Defaults', val: getDefaultValue() === 'YES' ? 'Yes' : 'No' }
+    ];
+    
+    items.forEach(item => {
+      if (item.val && item.val.toString().trim() !== '' && currentVoiceStep > item.step) {
+        hasAnyVal = true;
+        const tag = document.createElement('div');
+        tag.style.padding = '6px 12px';
+        tag.style.borderRadius = '20px';
+        tag.style.background = 'rgba(99, 102, 241, 0.15)';
+        tag.style.border = '1px solid rgba(99, 102, 241, 0.3)';
+        tag.style.color = 'var(--text-primary)';
+        tag.style.fontSize = '11.5px';
+        tag.style.cursor = 'pointer';
+        tag.style.fontFamily = 'var(--font-mono)';
+        tag.style.display = 'flex';
+        tag.style.alignItems = 'center';
+        tag.style.gap = '6px';
+        
+        tag.innerHTML = `<span><strong>${item.label}:</strong> ${item.val}</span>`;
+        tag.addEventListener('click', () => {
+          jumpToVoiceStep(item.step);
+        });
+        container.appendChild(tag);
+      }
+    });
+    
+    panel.style.display = hasAnyVal ? 'block' : 'none';
+  }
+
+  document.getElementById('speakQuestionBtn').addEventListener('click', () => {
+    playTTS(voiceSteps[currentVoiceStep].speak);
+  });
+
+  document.getElementById('voiceBackBtn').addEventListener('click', () => {
+    if (currentVoiceStep > 0) {
+      currentVoiceStep--;
+      renderVoiceStep();
+    }
+  });
+
+  document.getElementById('voiceRestartBtn').addEventListener('click', () => {
+    resetForm();
+    currentVoiceStep = 0;
+    renderVoiceStep();
+  });
+
+  document.getElementById('voiceNextBtn').addEventListener('click', async function() {
+    const step = voiceSteps[currentVoiceStep];
+    
+    let isValid = true;
+    if (step.field) {
+      if (step.field === 'default') {
+        isValid = step.validate(getDefaultValue());
+      } else {
+        const inputEl = fields[step.field] || document.getElementById(step.field);
+        isValid = step.validate(inputEl ? inputEl.value : '');
+      }
+    }
+    
+    if (!isValid) {
+      showToast(step.errorMsg || "Please fill in a valid answer.", true);
+      return;
+    }
+    
+    if (currentVoiceStep < voiceSteps.length - 1) {
+      currentVoiceStep++;
+      renderVoiceStep();
+      
+      if (currentVoiceStep === 10) {
+        await submitVoiceApplication();
+      }
+    }
+  });
+
+  async function submitVoiceApplication() {
+    try {
+      if (!validate()) {
+        showToast('Form inputs are incomplete or invalid.', true);
+        jumpToVoiceStep(9);
+        return;
+      }
+      
+      const payload = {
+        name: fields.name.value.trim(),
+        age: parseInt(fields.age.value, 10),
+        email: fields.email.value.trim(),
+        phone: fields.phone.value.trim(),
+        person_income: parseFloat(fields.income.value),
+        person_home_ownership: fields.ownership.value,
+        loan_int_rate: parseFloat(fields.rate.value),
+        loan_percent_income: parseFloat(fields.percent.value),
+        previous_loan_defaults_on_file: getDefaultValue(),
+      };
+      
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.detail || `Request failed (${res.status})`);
+      }
+      
+      const result = await res.json();
+      lastPredictionResult = result;
+      renderResult(result);
+      
+      jumpToVoiceStep(11);
+    } catch(err) {
+      showToast(err.message || 'Something went wrong. Please try again.', true);
+      jumpToVoiceStep(9);
+    }
+  }
+
+  // ---- Language Switcher ----
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.getAttribute('data-lang');
+      currentLang = lang;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const langMap = { en: 'en-US', hi: 'hi-IN', mr: 'mr-IN' };
+      if (recognition) recognition.lang = langMap[lang] || 'en-US';
+      applyLanguage(lang);
+    });
+  });
+
+  applyLanguage('en');
+  checkSession();
+  updateSignals();
+})();
+</script>
+
+</body>
+</html>

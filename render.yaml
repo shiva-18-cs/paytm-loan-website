@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: credence-loan-portal
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DB_PATH
+        value: users.db
+      - key: N8N_WEBHOOK_URL
+        value: http://localhost:5678/webhook/Loan_Application

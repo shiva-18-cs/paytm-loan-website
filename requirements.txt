@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+joblib
+pandas
+scikit-learn
+requests
+jinja2
+python-multipart
+shap
+dice-ml
+matplotlib
+gTTS

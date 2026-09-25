@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+venv/
+ENV/
+env/
+
+# Database files
+# (Optional: uncomment if you don't want to share the SQLite db,
+# but we leave it commented so teammates get the users schema)
+# users.db
+
+# OS files
+.DS_Store
+Thumbs.db
