@@ -52,9 +52,9 @@ try:
     features = joblib.load("Loan_features.joblib")
     ss = joblib.load("standard_scaler.joblib")
     mms = joblib.load("minmax_scaler.joblib")
-    print("✓ Successfully loaded ML models and scalers.")
+    print("[OK] Successfully loaded ML models and scalers.")
 except Exception as e:
-    print(f"⚠️ Warning loading ML artifacts: {e}")
+    print(f"[WARN] Warning loading ML artifacts: {e}")
 
 # ---------------------------------------------------------
 # Database Initialization & Schema
