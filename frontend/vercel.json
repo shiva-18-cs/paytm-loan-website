@@ -1,0 +1,53 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/health",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/health"
+    },
+    {
+      "source": "/predict",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/predict"
+    },
+    {
+      "source": "/simulate/:path*",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/simulate/:path*"
+    },
+    {
+      "source": "/simulate",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/simulate"
+    },
+    {
+      "source": "/repayment/:path*",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/repayment/:path*"
+    },
+    {
+      "source": "/restructure/:path*",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/restructure/:path*"
+    },
+    {
+      "source": "/safety-check",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/safety-check"
+    },
+    {
+      "source": "/grievance/:path*",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/grievance/:path*"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/api/:path*"
+    },
+    {
+      "source": "/speak",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/speak"
+    },
+    {
+      "source": "/get_user",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/get_user"
+    },
+    {
+      "source": "/export_audit_csv",
+      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/export_audit_csv"
+    }
+  ]
+}
