@@ -2966,7 +2966,9 @@
   // Smart API Base URL Support (for Vercel Frontend + Render Backend)
   const _origFetch = window.fetch;
   window.fetch = function(input, init) {
-    const customBase = window.CREDENCE_BACKEND_URL || localStorage.getItem('credence_backend_url') || '';
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const defaultRemote = isLocal ? '' : 'https://credence-backend-2g6n.onrender.com';
+    const customBase = window.CREDENCE_BACKEND_URL || localStorage.getItem('credence_backend_url') || defaultRemote;
     if (customBase && typeof input === 'string' && input.startsWith('/')) {
       input = customBase.replace(/\/+$/, '') + input;
     } else if (customBase && input && typeof input.url === 'string' && input.url.startsWith('/')) {

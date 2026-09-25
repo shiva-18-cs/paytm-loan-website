@@ -3,51 +3,55 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/health"
+      "destination": "https://credence-backend-2g6n.onrender.com/health"
+    },
+    {
+      "source": "/healthz",
+      "destination": "https://credence-backend-2g6n.onrender.com/healthz"
     },
     {
       "source": "/predict",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/predict"
+      "destination": "https://credence-backend-2g6n.onrender.com/predict"
     },
     {
       "source": "/simulate/:path*",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/simulate/:path*"
+      "destination": "https://credence-backend-2g6n.onrender.com/simulate/:path*"
     },
     {
       "source": "/simulate",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/simulate"
+      "destination": "https://credence-backend-2g6n.onrender.com/simulate"
     },
     {
       "source": "/repayment/:path*",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/repayment/:path*"
+      "destination": "https://credence-backend-2g6n.onrender.com/repayment/:path*"
     },
     {
       "source": "/restructure/:path*",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/restructure/:path*"
+      "destination": "https://credence-backend-2g6n.onrender.com/restructure/:path*"
     },
     {
       "source": "/safety-check",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/safety-check"
+      "destination": "https://credence-backend-2g6n.onrender.com/safety-check"
     },
     {
       "source": "/grievance/:path*",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/grievance/:path*"
+      "destination": "https://credence-backend-2g6n.onrender.com/grievance/:path*"
     },
     {
       "source": "/api/:path*",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/api/:path*"
+      "destination": "https://credence-backend-2g6n.onrender.com/api/:path*"
     },
     {
       "source": "/speak",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/speak"
+      "destination": "https://credence-backend-2g6n.onrender.com/speak"
     },
     {
       "source": "/get_user",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/get_user"
+      "destination": "https://credence-backend-2g6n.onrender.com/get_user"
     },
     {
       "source": "/export_audit_csv",
-      "destination": "https://YOUR-RENDER-BACKEND.onrender.com/export_audit_csv"
+      "destination": "https://credence-backend-2g6n.onrender.com/export_audit_csv"
     },
     {
       "source": "/(.*)",
