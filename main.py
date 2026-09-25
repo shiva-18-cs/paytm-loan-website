@@ -20,7 +20,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from gtts import gTTS
-from explainability import get_shap_chart, get_counterfactuals
+from explainability import get_shap_chart, get_counterfactuals, get_icon_explanations
+from repayment_tracker import router as repayment_router, init_repayments_table
+from restructuring import router as restructure_router, init_restructure_tables
+from safety_checker import router as safety_router
+from grievance import router as grievance_router, init_grievance_table
+from anonymous_simulation import router as anonymous_sim_router, execute_simulation_logic
 
 # ---------------------------------------------------------
 # App Configuration & Middleware
@@ -42,6 +47,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Wire Feature APIRouters
+app.include_router(repayment_router)
+app.include_router(restructure_router)
+app.include_router(safety_router)
+app.include_router(grievance_router)
+app.include_router(anonymous_sim_router)
+
 templates = Jinja2Templates(directory="templates")
 
 # ---------------------------------------------------------
@@ -60,10 +72,12 @@ except Exception as e:
 # Database Initialization & Schema
 # ---------------------------------------------------------
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=30.0)
     cursor = conn.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA busy_timeout = 30000")
     
-    # User Profile table (for mobile auth & auto-filling)
+    # 1. User Profile table (for mobile auth & auto-filling)
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             mobile_number TEXT PRIMARY KEY,
@@ -73,9 +87,9 @@ def init_db():
         )
     """)
     
-    # Applications Audit Trail table
+    # 2. Audit Logs Table (immutable decision ledger)
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS applications (
+        CREATE TABLE IF NOT EXISTS audit_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             application_id TEXT UNIQUE NOT NULL,
             created_at TEXT NOT NULL,
@@ -97,16 +111,55 @@ def init_db():
             debt_ratio REAL NOT NULL,
             shap_chart TEXT,
             counterfactuals_json TEXT,
-            underwriting_notes TEXT
+            underwriting_notes TEXT,
+            pooled BOOLEAN DEFAULT 0
         )
     """)
     
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_app_id ON applications(application_id)")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_app_phone ON applications(mobile_number)")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_app_created ON applications(created_at)")
+    # Idempotent Migration: Ensure pooled column exists in audit_logs
+    cursor.execute("PRAGMA table_info(audit_logs)")
+    audit_cols = [c[1] for c in cursor.fetchall()]
+    if "pooled" not in audit_cols:
+        cursor.execute("ALTER TABLE audit_logs ADD COLUMN pooled BOOLEAN DEFAULT 0")
+
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_audit_id ON audit_logs(application_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_audit_phone ON audit_logs(mobile_number)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_logs(created_at)")
+    
+    # 3. Check / maintain backward compatibility for applications queries
+    cursor.execute("SELECT type FROM sqlite_master WHERE name = 'applications' AND type = 'table'")
+    has_app_table = cursor.fetchone()
+    if not has_app_table:
+        cursor.execute("CREATE VIEW IF NOT EXISTS applications AS SELECT * FROM audit_logs")
+    else:
+        cursor.execute("PRAGMA table_info(applications)")
+        app_cols = [c[1] for c in cursor.fetchall()]
+        if "pooled" not in app_cols:
+            try:
+                cursor.execute("ALTER TABLE applications ADD COLUMN pooled BOOLEAN DEFAULT 0")
+            except Exception:
+                pass
+
+    # 4. Co-Applicants Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS co_applicants (
+            id TEXT PRIMARY KEY,
+            primary_user_id TEXT NOT NULL,
+            co_applicant_name TEXT NOT NULL,
+            co_applicant_income REAL NOT NULL,
+            co_applicant_employment TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_co_app_user ON co_applicants(primary_user_id)")
     
     conn.commit()
     conn.close()
+
+    # Initialize Feature Tables
+    init_repayments_table()
+    init_restructure_tables()
+    init_grievance_table()
 
 init_db()
 
@@ -122,6 +175,11 @@ class RegisterRequest(BaseModel):
     birthdate: str
     email: str
 
+class CoApplicantData(BaseModel):
+    name: str = Field(..., description="Full legal name of co-applicant")
+    income: float = Field(..., gt=0, description="Annual income of co-applicant")
+    employment: str = Field("Salaried", description="Employment type, e.g. Salaried, Self-Employed")
+
 class LoanFeatures(BaseModel):
     name: str
     age: int
@@ -132,12 +190,14 @@ class LoanFeatures(BaseModel):
     loan_int_rate: float
     loan_percent_income: float
     previous_loan_defaults_on_file: str
+    co_applicant: Optional[CoApplicantData] = None
 
 class SimulationRequest(BaseModel):
     loan_amount: float = Field(..., gt=0, description="Requested principal amount")
     loan_int_rate: float = Field(..., ge=0, description="Annual interest rate percentage")
     term_months: int = Field(60, gt=0, le=120, description="Loan term in months")
     annual_income: float = Field(..., gt=0, description="Applicant annual income")
+
 
 # ---------------------------------------------------------
 # Helper Functions: Financial & Risk Intelligence
@@ -260,146 +320,205 @@ def health_check():
         "timestamp": datetime.datetime.now().isoformat()
     }
 
+def _execute_single_inference(data: LoanFeatures, is_household: bool = False) -> dict:
+    home_ownership_mapping = {
+        "RENT": 0, "OWN": 1, "MORTGAGE": 2, "OTHER": 3
+    }
+    previous_loan_defaults_mapping = {
+        "NO": 0, "YES": 1
+    }
+
+    # Process input vector
+    input_df = pd.DataFrame([{
+        "person_income": data.person_income,
+        "person_home_ownership": home_ownership_mapping.get(data.person_home_ownership, 0),
+        "loan_int_rate": data.loan_int_rate,
+        "loan_percent_income": data.loan_percent_income,
+        "previous_loan_defaults_on_file": previous_loan_defaults_mapping.get(data.previous_loan_defaults_on_file, 0)
+    }])
+
+    input_df[['person_income', 'loan_percent_income']] = ss.transform(
+        input_df[['person_income', 'loan_percent_income']]
+    )
+    input_df[['loan_int_rate']] = mms.transform(
+        input_df[['loan_int_rate']]
+    )
+    input_df = input_df[features]
+
+    # Classification prediction & probability confidence
+    prediction_val = int(model.predict(input_df)[0])
+    result = "Approved" if prediction_val == 1 else "Rejected"
+    
+    try:
+        proba = model.predict_proba(input_df)[0]
+        confidence_score = round(float(proba[prediction_val]) * 100.0, 1)
+    except Exception:
+        confidence_score = 92.5
+
+    # Financial Calculations
+    loan_amount, emi, debt_ratio = calculate_financials(
+        data.person_income, data.loan_percent_income, data.loan_int_rate, 60
+    )
+    risk_grade = derive_risk_grade(result, confidence_score)
+
+    # Explainability (SHAP, DiCE & Icon Explanation)
+    raw_df = pd.DataFrame([{
+        "person_income": data.person_income,
+        "person_home_ownership": data.person_home_ownership,
+        "loan_int_rate": data.loan_int_rate,
+        "loan_percent_income": data.loan_percent_income,
+        "previous_loan_defaults_on_file": data.previous_loan_defaults_on_file
+    }])
+
+    shap_chart = get_shap_chart(raw_df)
+    icon_explanation = get_icon_explanations(raw_df)
+    is_approved = (prediction_val == 1)
+    counterfactuals = get_counterfactuals(raw_df, is_approved)
+
+    # Fallback counterfactuals if DiCE returns empty
+    if not is_approved and not counterfactuals:
+        counterfactuals = [
+            {
+                "person_income": round(data.person_income * 1.25, 2),
+                "person_home_ownership": data.person_home_ownership,
+                "loan_int_rate": max(5.0, round(data.loan_int_rate - 2.5, 2)),
+                "loan_percent_income": round(data.loan_percent_income * 0.7, 2),
+                "previous_loan_defaults_on_file": "NO"
+            }
+        ]
+
+    # Generate Comprehensive Underwriting Memo
+    underwriting_memo = generate_underwriting_memo(
+        data, result, confidence_score, risk_grade, loan_amount, emi, debt_ratio
+    )
+
+    # Generate Unique Application ID
+    app_date_str = datetime.datetime.now().strftime("%Y%m%d")
+    short_code = uuid.uuid4().hex[:6].upper()
+    app_suffix = f"{short_code}-HSE" if is_household else short_code
+    application_id = f"APP-{app_date_str}-{app_suffix}"
+    created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Persist to Audit Database
+    try:
+        conn = sqlite3.connect(DB_PATH, timeout=30.0)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO audit_logs (
+                application_id, created_at, mobile_number, name, age, email, phone,
+                income, home_ownership, loan_amount, loan_int_rate, loan_percent_income,
+                previous_default, prediction, confidence_score, risk_grade,
+                monthly_emi, debt_ratio, shap_chart, counterfactuals_json, underwriting_notes, pooled
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            application_id, created_at, data.phone.strip(), data.name.strip(), data.age,
+            data.email.strip(), data.phone.strip(), data.person_income, data.person_home_ownership,
+            loan_amount, data.loan_int_rate, data.loan_percent_income,
+            data.previous_loan_defaults_on_file, result, confidence_score, risk_grade,
+            emi, debt_ratio, shap_chart if shap_chart else "",
+            json.dumps(counterfactuals), json.dumps(underwriting_memo),
+            1 if is_household else 0
+        ))
+        conn.commit()
+        conn.close()
+    except Exception as db_err:
+        print("Audit Log Database Error:", db_err)
+
+    # Fire Outbound Webhook to n8n (Async lead capture)
+    payload = {
+        "application_id": application_id,
+        "name": data.name,
+        "age": data.age,
+        "income": data.person_income,
+        "home_ownership": data.person_home_ownership,
+        "loan_amount": loan_amount,
+        "interest_rate": data.loan_int_rate,
+        "loan_percent_income": data.loan_percent_income,
+        "previous_default": data.previous_loan_defaults_on_file,
+        "prediction": result,
+        "confidence_score": confidence_score,
+        "risk_grade": risk_grade,
+        "monthly_emi": emi,
+        "debt_ratio": debt_ratio,
+        "email": data.email,
+        "phone": data.phone,
+        "pooled": is_household
+    }
+
+    try:
+        requests.post(N8N_WEBHOOK_URL, json=payload, timeout=3)
+    except Exception as webhook_error:
+        print("Webhook Delivery Notice:", webhook_error)
+
+    return {
+        "application_id": application_id,
+        "prediction": result,
+        "confidence_score": confidence_score,
+        "risk_grade": risk_grade,
+        "shap_chart": shap_chart,
+        "counterfactuals": counterfactuals,
+        "emi": emi,
+        "debt_ratio": debt_ratio,
+        "loan_amount": loan_amount,
+        "underwriting_memo": underwriting_memo,
+        "icon_explanation": icon_explanation
+    }
+
 @app.post("/predict")
 def predict(data: LoanFeatures):
     try:
-        home_ownership_mapping = {
-            "RENT": 0, "OWN": 1, "MORTGAGE": 2, "OTHER": 3
-        }
-        previous_loan_defaults_mapping = {
-            "NO": 0, "YES": 1
-        }
+        # If no co-applicant is supplied, the existing /predict behavior must remain exactly the same
+        if not data.co_applicant:
+            return _execute_single_inference(data, is_household=False)
 
-        # Process input vector
-        input_df = pd.DataFrame([{
-            "person_income": data.person_income,
-            "person_home_ownership": home_ownership_mapping.get(data.person_home_ownership, 0),
-            "loan_int_rate": data.loan_int_rate,
-            "loan_percent_income": data.loan_percent_income,
-            "previous_loan_defaults_on_file": previous_loan_defaults_mapping.get(data.previous_loan_defaults_on_file, 0)
-        }])
+        # Feature 3: Co-Applicant Household Income Pooling
+        # Prediction 1: Individual
+        ind_res = _execute_single_inference(data, is_household=False)
 
-        input_df[['person_income', 'loan_percent_income']] = ss.transform(
-            input_df[['person_income', 'loan_percent_income']]
+        # Prediction 2: Household
+        orig_loan_amount = data.person_income * data.loan_percent_income
+        pooled_income = data.person_income + data.co_applicant.income
+        pooled_loan_pct = round(orig_loan_amount / pooled_income, 4) if pooled_income > 0 else data.loan_percent_income
+
+        household_data = LoanFeatures(
+            name=f"{data.name} & {data.co_applicant.name}",
+            age=data.age,
+            email=data.email,
+            phone=data.phone,
+            person_income=pooled_income,
+            person_home_ownership=data.person_home_ownership,
+            loan_int_rate=data.loan_int_rate,
+            loan_percent_income=pooled_loan_pct,
+            previous_loan_defaults_on_file=data.previous_loan_defaults_on_file,
+            co_applicant=None
         )
-        input_df[['loan_int_rate']] = mms.transform(
-            input_df[['loan_int_rate']]
-        )
-        input_df = input_df[features]
+        hse_res = _execute_single_inference(household_data, is_household=True)
 
-        # Classification prediction & probability confidence
-        prediction_val = int(model.predict(input_df)[0])
-        result = "Approved" if prediction_val == 1 else "Rejected"
-        
+        # Persist co-applicant record
         try:
-            proba = model.predict_proba(input_df)[0]
-            confidence_score = round(float(proba[prediction_val]) * 100.0, 1)
-        except Exception:
-            confidence_score = 92.5
-
-        # Financial Calculations
-        loan_amount, emi, debt_ratio = calculate_financials(
-            data.person_income, data.loan_percent_income, data.loan_int_rate, 60
-        )
-        risk_grade = derive_risk_grade(result, confidence_score)
-
-        # Explainability (SHAP & DiCE)
-        raw_df = pd.DataFrame([{
-            "person_income": data.person_income,
-            "person_home_ownership": data.person_home_ownership,
-            "loan_int_rate": data.loan_int_rate,
-            "loan_percent_income": data.loan_percent_income,
-            "previous_loan_defaults_on_file": data.previous_loan_defaults_on_file
-        }])
-
-        shap_chart = get_shap_chart(raw_df)
-        is_approved = (prediction_val == 1)
-        counterfactuals = get_counterfactuals(raw_df, is_approved)
-
-        # Fallback counterfactuals if DiCE returns empty
-        if not is_approved and not counterfactuals:
-            counterfactuals = [
-                {
-                    "person_income": round(data.person_income * 1.25, 2),
-                    "person_home_ownership": data.person_home_ownership,
-                    "loan_int_rate": max(5.0, round(data.loan_int_rate - 2.5, 2)),
-                    "loan_percent_income": round(data.loan_percent_income * 0.7, 2),
-                    "previous_loan_defaults_on_file": "NO"
-                }
-            ]
-
-        # Generate Comprehensive Underwriting Memo
-        underwriting_memo = generate_underwriting_memo(
-            data, result, confidence_score, risk_grade, loan_amount, emi, debt_ratio
-        )
-
-        # Generate Unique Application ID
-        app_date_str = datetime.datetime.now().strftime("%Y%m%d")
-        app_uuid_short = uuid.uuid4().hex[:6].upper()
-        application_id = f"APP-{app_date_str}-{app_uuid_short}"
-        created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        # Persist to Applications Audit Database
-        try:
-            conn = sqlite3.connect(DB_PATH)
+            conn = sqlite3.connect(DB_PATH, timeout=30.0)
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO applications (
-                    application_id, created_at, mobile_number, name, age, email, phone,
-                    income, home_ownership, loan_amount, loan_int_rate, loan_percent_income,
-                    previous_default, prediction, confidence_score, risk_grade,
-                    monthly_emi, debt_ratio, shap_chart, counterfactuals_json, underwriting_notes
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO co_applicants (
+                    id, primary_user_id, co_applicant_name, co_applicant_income, co_applicant_employment, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?)
             """, (
-                application_id, created_at, data.phone.strip(), data.name.strip(), data.age,
-                data.email.strip(), data.phone.strip(), data.person_income, data.person_home_ownership,
-                loan_amount, data.loan_int_rate, data.loan_percent_income,
-                data.previous_loan_defaults_on_file, result, confidence_score, risk_grade,
-                emi, debt_ratio, shap_chart if shap_chart else "",
-                json.dumps(counterfactuals), json.dumps(underwriting_memo)
+                str(uuid.uuid4()),
+                data.phone.strip(),
+                data.co_applicant.name.strip(),
+                data.co_applicant.income,
+                data.co_applicant.employment.strip(),
+                datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             ))
             conn.commit()
             conn.close()
-        except Exception as db_err:
-            print("Audit Log Database Error:", db_err)
-
-        # Fire Outbound Webhook to n8n (Async lead capture)
-        payload = {
-            "application_id": application_id,
-            "name": data.name,
-            "age": data.age,
-            "income": data.person_income,
-            "home_ownership": data.person_home_ownership,
-            "loan_amount": loan_amount,
-            "interest_rate": data.loan_int_rate,
-            "loan_percent_income": data.loan_percent_income,
-            "previous_default": data.previous_loan_defaults_on_file,
-            "prediction": result,
-            "confidence_score": confidence_score,
-            "risk_grade": risk_grade,
-            "monthly_emi": emi,
-            "debt_ratio": debt_ratio,
-            "email": data.email,
-            "phone": data.phone
-        }
-
-        try:
-            requests.post(N8N_WEBHOOK_URL, json=payload, timeout=3)
-        except Exception as webhook_error:
-            # Non-blocking; logged gracefully
-            print("Webhook Delivery Notice:", webhook_error)
+        except Exception as co_err:
+            print("Co-Applicant Save Error:", co_err)
 
         return {
-            "application_id": application_id,
-            "prediction": result,
-            "confidence_score": confidence_score,
-            "risk_grade": risk_grade,
-            "shap_chart": shap_chart,
-            "counterfactuals": counterfactuals,
-            "emi": emi,
-            "debt_ratio": debt_ratio,
-            "loan_amount": loan_amount,
-            "underwriting_memo": underwriting_memo
+            "individual": ind_res,
+            "household": hse_res,
+            "pooled": True
         }
 
     except Exception as e:
@@ -413,6 +532,7 @@ def predict(data: LoanFeatures):
 # Loan Simulator & Amortization API
 # ---------------------------------------------------------
 @app.post("/api/simulate")
+@app.post("/simulate")
 def simulate_loan(req: SimulationRequest):
     try:
         r_monthly = (req.loan_int_rate / 100.0) / 12.0
@@ -652,6 +772,23 @@ def register(data: RegisterRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database insertion failed: {str(e)}")
+
+# Aliases for User & Export APIs
+@app.get("/get_user")
+def get_user_alias(mobile_number: str = Query(...)):
+    return login_check(LoginCheckRequest(mobile_number=mobile_number))
+
+@app.post("/get_user")
+def post_get_user_alias(data: LoginCheckRequest):
+    return login_check(data)
+
+@app.post("/register_user")
+def register_user_alias(data: RegisterRequest):
+    return register(data)
+
+@app.get("/export_audit_csv")
+def export_audit_csv_alias():
+    return export_applications_csv()
 
 # ---------------------------------------------------------
 # Multi-lingual Voice TTS Route

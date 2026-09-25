@@ -1610,6 +1610,127 @@
     gap: 6px;
     margin-bottom: 6px;
   }
+  /* ===== Feature 1: Repayment Health & SVG Line Chart ===== */
+  .repay-chart-container {
+    width: 100%;
+    height: 180px;
+    background: #F8FAFC;
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+    padding: 12px;
+    margin: 16px 0;
+    position: relative;
+  }
+  .repay-chart-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ===== Feature 2: Restructuring Cards ===== */
+  .restr-card {
+    background: #FFFFFF;
+    border: 1px solid var(--dash-border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+  }
+  .restr-card:hover {
+    border-color: #0C120F;
+  }
+  .restr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  /* ===== Feature 4: Safety Checker Checklist ===== */
+  .safety-flag-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .safety-flag-item.provided {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+  }
+  .safety-flag-item.missing {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+  }
+
+  /* ===== Feature 5: Visual Icon Cards ===== */
+  .icon-card {
+    border-radius: 12px;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  .icon-card.positive {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #065F46;
+  }
+  .icon-card.negative {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #991B1B;
+  }
+  .icon-card-svg {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ===== Feature 6: Grievance Ledger & Badges ===== */
+  .status-badge {
+    padding: 3px 8px;
+    border-radius: 99px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: inline-block;
+  }
+  .status-badge.open { background: rgba(59, 130, 246, 0.15); color: #2563EB; }
+  .status-badge.acknowledged { background: rgba(245, 158, 11, 0.15); color: #D97706; }
+  .status-badge.escalated { background: rgba(239, 68, 68, 0.2); color: #DC2626; animation: pulseGlow 1.5s infinite; }
+  .status-badge.resolved { background: rgba(16, 185, 129, 0.15); color: #059669; }
+
+  /* ===== Feature 3: Co-Applicant Dual Results Toggle ===== */
+  .dual-toggle-bar {
+    display: flex;
+    gap: 4px;
+    background: #E2E8F0;
+    padding: 3px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .dual-toggle-btn {
+    flex: 1;
+    padding: 7px 12px;
+    font-size: 11.5px;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-dark-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .dual-toggle-btn.active {
+    background: #0C120F;
+    color: var(--accent-lime);
+  }
 
   /* ===== Print / PDF Styles ===== */
   @media print {
@@ -1686,16 +1807,24 @@
         <span class="btn-text" id="loginBtnText">Continue</span>
         <svg class="arrow" viewBox="0 0 16 16" fill="none" style="width: 14px; height: 14px; stroke: currentColor; stroke-width: 2;"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
+
+      <!-- Public / Anonymous Tools Shortcut (No Login Needed) -->
+      <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--dash-border); text-align: center;">
+        <div style="font-size: 11px; color: var(--text-dark-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; font-weight: 600;">Public & Anonymous Tools (No Login Required)</div>
+        <div style="display: flex; gap: 8px; justify-content: center;">
+          <button type="button" class="term-btn" id="overlaySafetyBtn" style="font-size: 11px; padding: 6px 12px;">Safety Checker</button>
+          <button type="button" class="term-btn" id="overlayAnonSimBtn" style="font-size: 11px; padding: 6px 12px;">Try Before Apply</button>
+        </div>
+      </div>
     </form>
   </div>
 </div>
-
 
 <!-- Announcement Bar -->
 <div class="announcement-bar" id="announcementBar">
   <div class="announcement-content">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-    <span>क्रेडेंस लोन पोर्टल &bull; Credence Underwriting Operating System &bull; क्रेडेंस लोन पोर्टल</span>
+    <span>Credence Underwriting Operating System &bull; AI Underwriting &bull; Distress Tracker &bull; Public Safety Checker</span>
   </div>
   <button type="button" class="announcement-close" onclick="document.getElementById('announcementBar').style.display='none'">×</button>
 </div>
@@ -1708,13 +1837,18 @@
     </div>
     <div>
       <div class="brand-name">Credence</div>
-      <div class="brand-tag" data-i18n="brandTag">Loan Portal</div>
+      <div class="brand-tag" data-i18n="brandTag">Loan Portal 2.0</div>
     </div>
   </div>
   
   <div class="header-nav">
     <a href="javascript:void(0)" class="nav-link" id="navUnderwriting">Underwriting</a>
-    <a href="javascript:void(0)" class="nav-link" id="navSimulator">Loan Simulator</a>
+    <a href="javascript:void(0)" class="nav-link" id="navSimulator">Simulator</a>
+    <a href="javascript:void(0)" class="nav-link" id="navRepayment">Repayment Health</a>
+    <a href="javascript:void(0)" class="nav-link" id="navRestructuring">Restructuring</a>
+    <a href="javascript:void(0)" class="nav-link" id="navSafety">Safety Checker</a>
+    <a href="javascript:void(0)" class="nav-link" id="navGrievances">Grievances</a>
+    <a href="javascript:void(0)" class="nav-link" id="navAnonSim">Sandbox</a>
     <a href="javascript:void(0)" class="nav-link" id="navAudit">Audit History</a>
     <a href="/api/applications/export/csv" class="nav-link" id="navExport" target="_blank" title="Export applications to CSV">Export CSV</a>
   </div>
@@ -1734,19 +1868,19 @@
     </button>
 
     <div class="topbar-meta">
-      <span><span class="dot"></span><span data-i18n="statusOnline">Online · v1.0</span></span>
+      <span><span class="dot"></span><span data-i18n="statusOnline">Online · v2.0</span></span>
     </div>
   </div>
 </div>
 
 <!-- Hero Section -->
 <div class="hero-section">
-  <div class="hero-badge">Built for modern underwriters</div>
+  <div class="hero-badge">AI Underwriting & Intelligent Credit Infrastructure</div>
   <h1 class="hero-title" data-i18n-html="pageTitle">
     Assess the future of <em>smart lending</em>
   </h1>
   <p class="hero-subtext" data-i18n="pageSub">
-    Underwrite, analyze, and approve loans from a single financial operating system.
+    Next-generation algorithmic underwriting, real-time stress testing, and borrower rehabilitation.
   </p>
 </div>
 
@@ -1758,14 +1892,29 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z"/></svg>
     </div>
     <div class="sidebar-menu">
-      <button type="button" class="tab-btn active" data-tab="form" title="Form Mode">
+      <button type="button" class="tab-btn active" data-tab="form" title="Underwriting Application">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
       </button>
-      <button type="button" class="tab-btn" data-tab="voice" title="Voice Assistant">
+      <button type="button" class="tab-btn" data-tab="voice" title="Voice Assistant Mode">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
       </button>
-      <button type="button" class="tab-btn" data-tab="simulator" title="Loan Simulator & Amortization">
+      <button type="button" class="tab-btn" data-tab="simulator" title="What-If Loan Simulator">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M7 8h10M7 12h6"/></svg>
+      </button>
+      <button type="button" class="tab-btn" data-tab="repayment" title="Repayment Health Tracker">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </button>
+      <button type="button" class="tab-btn" data-tab="restructuring" title="Restructuring Offers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <button type="button" class="tab-btn" data-tab="safety" title="Digital Lending Safety Checker">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </button>
+      <button type="button" class="tab-btn" data-tab="grievances" title="Grievances & Support">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </button>
+      <button type="button" class="tab-btn" data-tab="anonymous-sim" title="Try Before You Apply (Sandbox)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </button>
       <button type="button" class="tab-btn" data-tab="audit" title="Audit Trail & Decision Logs">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -1941,6 +2090,43 @@
                     <div style="font-size: 11px; color: var(--text-dark-muted); margin-bottom: 2px;" data-i18n="monthlyDebt">Monthly Debt-to-Income</div>
                     <div style="font-size: 16px; font-weight: 700; color: var(--text-dark-primary);" id="liveDebtRatio">—</div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feature 3: Co-Applicant / Household Income Pooling -->
+            <div class="field-group" style="border: 1px dashed var(--dash-border); background: #FAFBF9;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13.5px; font-weight: 700; color: var(--text-dark-primary);">
+                  <input type="checkbox" id="coAppToggle" style="width: 17px; height: 17px; accent-color: #0C120F; cursor: pointer;">
+                  <span>Add Co-Applicant (Household Income Pooling)</span>
+                </label>
+                <span class="memo-badge" style="background: rgba(16, 185, 129, 0.15); color: #059669; font-size: 10px;">Increases Eligibility Headroom</span>
+              </div>
+              <p style="font-size: 12px; color: var(--text-dark-muted); line-height: 1.5; margin-bottom: 12px;">Pool an additional income earner to reduce overall household debt burden and elevate credit approval odds.</p>
+              
+              <div id="coAppFieldsContainer" style="display: none; padding-top: 12px; border-top: 1px solid var(--dash-border);">
+                <div class="grid-2">
+                  <div class="field">
+                    <label for="coAppName">Co-Applicant Full Legal Name</label>
+                    <input type="text" id="coAppName" placeholder="e.g. John Doe">
+                  </div>
+                  <div class="field">
+                    <label for="coAppIncome">Co-Applicant Annual Income (₹)</label>
+                    <div class="input-wrap">
+                      <input type="number" id="coAppIncome" placeholder="45000" min="0">
+                      <span class="suffix">₹/yr</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="field" style="margin-top: 6px;">
+                  <label for="coAppEmployment">Employment Type</label>
+                  <select id="coAppEmployment">
+                    <option value="Salaried">Salaried (Full-Time)</option>
+                    <option value="Self-Employed">Self-Employed Professional</option>
+                    <option value="Business">Business Owner</option>
+                    <option value="Other">Other</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -2172,6 +2358,406 @@
             </div>
           </div>
         </div>
+
+        <!-- Feature 1: Repayment Health & Distress Tracker Container -->
+        <div id="repaymentModeContainer" style="display: none;">
+          <div class="audit-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h2 class="sim-title">Repayment Health & Distress Tracker</h2>
+              <span class="memo-badge" id="repayDistressBadge" style="background: rgba(16, 185, 129, 0.15); color: #059669;">Normal Health</span>
+            </div>
+            <p class="sim-subtitle">Continuous portfolio surveillance tracking debt-to-income (DTI) trajectories and early distress signals.</p>
+
+            <div class="sim-kpi-grid" style="grid-template-columns: repeat(4, 1fr); margin-top: 14px;">
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Current DTI</div>
+                <div class="sim-kpi-val" id="repayKpiCurrentDti">—%</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Previous DTI</div>
+                <div class="sim-kpi-val" id="repayKpiPrevDti">—%</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Last EMI Due</div>
+                <div class="sim-kpi-val" id="repayKpiEmiDue">₹—</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Last EMI Paid</div>
+                <div class="sim-kpi-val" id="repayKpiEmiPaid">₹—</div>
+              </div>
+            </div>
+
+            <!-- DTI Trend Line Chart (SVG) -->
+            <div style="margin-top: 18px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--text-dark-primary);">DTI Trajectory Trend</span>
+                <span style="font-size: 11px; font-weight: 600; color: #DC2626;">Distress Limit: 40%</span>
+              </div>
+              <div class="repay-chart-container" id="repayChartBox">
+                <svg class="repay-chart-svg" id="repaySvgChart" viewBox="0 0 500 150">
+                  <line x1="40" y1="60" x2="490" y2="60" stroke="#EF4444" stroke-dasharray="4 4" stroke-width="1.5"/>
+                  <text x="490" y="55" fill="#EF4444" font-size="9" text-anchor="end" font-weight="bold">40% Limit</text>
+                  <text x="250" y="80" fill="#94A3B8" font-size="12" text-anchor="middle" id="repayEmptyChartText">Select or log repayment cycle to view trend</text>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Log Repayment Form -->
+            <div style="background: #F8FAFC; border: 1px solid var(--dash-border); border-radius: 12px; padding: 18px; margin-top: 18px;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--text-dark-primary); margin-bottom: 12px;">Log Monthly Repayment Cycle</div>
+              <form id="repayLogForm">
+                <div class="grid-2">
+                  <div class="field">
+                    <label for="repayLoanId">Loan / Application ID</label>
+                    <input type="text" id="repayLoanId" placeholder="e.g. APP-2026..." required>
+                  </div>
+                  <div class="field">
+                    <label for="repayCycleDate">Cycle Date</label>
+                    <input type="date" id="repayCycleDate" required>
+                  </div>
+                </div>
+                <div class="grid-2">
+                  <div class="field">
+                    <label for="repayEmiDue">Scheduled EMI Due (₹)</label>
+                    <input type="number" id="repayEmiDue" placeholder="10000" min="0" required>
+                  </div>
+                  <div class="field">
+                    <label for="repayEmiPaid">Actual EMI Paid (₹)</label>
+                    <input type="number" id="repayEmiPaid" placeholder="9500" min="0" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="repayUpdatedIncome">Updated Annual / Monthly Income (₹) <span class="hint">(optional)</span></label>
+                  <input type="number" id="repayUpdatedIncome" placeholder="e.g. 48000" min="0">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                  <button type="submit" class="primary-btn" id="repaySubmitBtn">
+                    <span>Log Repayment & Update DTI</span>
+                  </button>
+                  <button type="button" class="audit-btn" id="repayLoadHistoryBtn">
+                    <span>Fetch History</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Repayment History Table -->
+            <div style="margin-top: 24px;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--text-dark-primary); margin-bottom: 10px;">Repayment Cycle Ledger</div>
+              <div class="audit-table-wrap">
+                <table class="audit-table">
+                  <thead>
+                    <tr>
+                      <th>Cycle Date</th>
+                      <th>EMI Due</th>
+                      <th>EMI Paid</th>
+                      <th>Effective Income</th>
+                      <th>DTI Ratio</th>
+                      <th>Distress Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="repayTableBody">
+                    <tr>
+                      <td colspan="7" style="text-align: center; color: var(--text-dark-muted); padding: 18px;">No repayment records loaded yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature 2: Restructuring Container -->
+        <div id="restructuringModeContainer" style="display: none;">
+          <div class="audit-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h2 class="sim-title">Early Distress &rarr; Loan Restructuring Nudge</h2>
+              <span class="memo-badge" style="background: rgba(245, 158, 11, 0.15); color: #D97706;">DiCE Engine Powered</span>
+            </div>
+            <p class="sim-subtitle">Algorithmic debt rehabilitation engine providing viable tenure and EMI restructuring options for distressed borrowers.</p>
+
+            <!-- Search / Load Loan Section -->
+            <div style="display: flex; gap: 10px; margin: 18px 0;">
+              <input type="text" id="restrLoanIdInput" class="audit-search-input" placeholder="Enter Loan ID or Application ID to evaluate (e.g. APP-2026...)" style="flex: 1;">
+              <button type="button" class="primary-btn" id="restrSuggestBtn">
+                <span>Generate Restructuring Options</span>
+              </button>
+            </div>
+
+            <!-- Distress Context Box -->
+            <div id="restrContextBox" style="display: none; background: #FEF3C7; border: 1px solid #FDE68A; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #92400E; margin-bottom: 6px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span>Early Distress Intervention Triggered</span>
+              </div>
+              <p id="restrDistressReasonText" style="font-size: 12.5px; color: #92400E; line-height: 1.5; margin-bottom: 8px;">Borrower DTI has exceeded statutory stress thresholds. Select an approved restructuring schedule below to prevent delinquency.</p>
+              <div style="display: flex; gap: 20px; font-size: 12px; color: #78350F;">
+                <div>Current DTI: <strong id="restrCurrentDtiVal">—%</strong></div>
+                <div>Current EMI: <strong id="restrCurrentEmiVal">₹—</strong></div>
+              </div>
+            </div>
+
+            <!-- Suggested Restructuring Cards Container -->
+            <div id="restrOffersContainer">
+              <div style="text-align: center; color: var(--text-dark-muted); padding: 40px; background: #F8FAFC; border: 1px dashed var(--dash-border); border-radius: 12px;">
+                Enter a Loan / Application ID above to generate mathematically verified DiCE restructuring plans.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature 4: Digital Lending Safety Checker Container -->
+        <div id="safetyModeContainer" style="display: none;">
+          <div class="audit-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h2 class="sim-title">Digital Lending Safety Checker</h2>
+              <span class="memo-badge" style="background: rgba(59, 130, 246, 0.15); color: #2563EB;">Public & Anonymous</span>
+            </div>
+            <p class="sim-subtitle">Independent statutory disclosure-completeness audit for digital lending platforms. Does not require login or KYC.</p>
+
+            <form id="safetyCheckForm" style="margin-top: 18px;">
+              <div class="grid-2">
+                <div class="field">
+                  <label for="safetyLenderName">Lender / Brand Name</label>
+                  <input type="text" id="safetyLenderName" placeholder="e.g. QuickFinance Ltd">
+                </div>
+                <div class="field">
+                  <label for="safetyInterestRate">Stated Interest Rate / APR</label>
+                  <input type="text" id="safetyInterestRate" placeholder="e.g. 18.5% APR">
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="safetyFees">Itemized Fees / Processing Charges</label>
+                  <input type="text" id="safetyFees" placeholder="e.g. Processing: 2%, Penal: ₹500">
+                </div>
+                <div class="field">
+                  <label for="safetyTenure">Offered Tenure</label>
+                  <input type="text" id="safetyTenure" placeholder="e.g. 12 to 36 Months">
+                </div>
+              </div>
+
+              <div class="field" style="margin-top: 6px;">
+                <label style="margin-bottom: 8px; font-weight: 700;">Mandatory Disclosures Checklist Provided by Lender:</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
+                    <input type="checkbox" id="chkApr" class="safety-chk" value="APR Key Fact Statement" checked>
+                    <span>Annual Percentage Rate (APR)</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
+                    <input type="checkbox" id="chkFees" class="safety-chk" value="Itemized schedule of charges">
+                    <span>Itemized Fee Schedule</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
+                    <input type="checkbox" id="chkReg" class="safety-chk" value="RBI NBFC Registration License">
+                    <span>Official Entity Registration</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
+                    <input type="checkbox" id="chkGrievance" class="safety-chk" value="Nodal Grievance Officer details">
+                    <span>Grievance Contact Channel</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
+                    <input type="checkbox" id="chkCooling" class="safety-chk" value="Cooling-off look-up exit window">
+                    <span>Cooling-Off Exit Window</span>
+                  </label>
+                </div>
+              </div>
+
+              <button type="submit" class="primary-btn" id="safetySubmitBtn" style="margin-top: 14px;">
+                <span>Audit Disclosure Completeness</span>
+              </button>
+            </form>
+
+            <!-- Results Output -->
+            <div id="safetyResultsBox" style="display: none; margin-top: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 14px; font-weight: 700; color: var(--text-dark-primary);">Audit Findings</span>
+                <span class="status-badge" id="safetyCompletenessBadge">Partial</span>
+              </div>
+              <div id="safetyFlagsList"></div>
+              
+              <!-- Mandatory Statutory Disclaimer -->
+              <div style="background: rgba(0,0,0,0.03); border-left: 3px solid #64748B; padding: 12px 16px; border-radius: 6px; margin-top: 16px; font-size: 12px; color: var(--text-dark-muted); line-height: 1.5;" id="safetyDisclaimerText">
+                This tool checks disclosure completeness only. It does not determine whether a lender is legitimate, registered, fraudulent, or safe.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature 6: Grievances & Query Routing Container -->
+        <div id="grievancesModeContainer" style="display: none;">
+          <div class="audit-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h2 class="sim-title">Grievance & Query Redressal Ledger</h2>
+              <button type="button" class="audit-btn" id="runEscalationBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><path d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+                <span>Run SLA Check (24h)</span>
+              </button>
+            </div>
+            <p class="sim-subtitle">Statutory grievance resolution system with automated 24-hour escalation and downstream notifications.</p>
+
+            <div class="sim-kpi-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 14px;">
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Average Resolution Time</div>
+                <div class="sim-kpi-val" id="grievanceAvgTime">— hrs</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Total Tickets</div>
+                <div class="sim-kpi-val" id="grievanceTotalCount">0</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Escalation SLA</div>
+                <div class="sim-kpi-val">24 Hours</div>
+              </div>
+            </div>
+
+            <!-- Submit Form -->
+            <div style="background: #F8FAFC; border: 1px solid var(--dash-border); border-radius: 12px; padding: 18px; margin-top: 18px;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--text-dark-primary); margin-bottom: 12px;">Submit Grievance / Customer Query</div>
+              <form id="grievanceSubmitForm">
+                <div class="grid-2">
+                  <div class="field">
+                    <label for="grievanceLoanId">Loan ID <span class="hint">(optional)</span></label>
+                    <input type="text" id="grievanceLoanId" placeholder="e.g. APP-2026...">
+                  </div>
+                  <div class="field">
+                    <label for="grievanceMobile">Applicant Mobile Number</label>
+                    <input type="tel" id="grievanceMobile" placeholder="e.g. 9876543210" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="grievanceCategory">Grievance Category</label>
+                  <select id="grievanceCategory">
+                    <option value="EMI Calculation Dispute">EMI Calculation Dispute</option>
+                    <option value="Double Debit / Payment Discrepancy">Double Debit / Payment Discrepancy</option>
+                    <option value="Credit Bureau Reporting Error">Credit Bureau Reporting Error</option>
+                    <option value="Foreclosure / NOC Delay">Foreclosure / NOC Delay</option>
+                    <option value="General Query">General Query</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="grievanceDesc">Description of Complaint</label>
+                  <textarea id="grievanceDesc" rows="3" style="width: 100%; border: 1px solid var(--dash-border); border-radius: 8px; padding: 10px; font-family: var(--font-body); font-size: 13px;" placeholder="Provide specific details regarding the issue..." required></textarea>
+                </div>
+                <button type="submit" class="primary-btn" id="grievanceSubmitBtn">
+                  <span>Submit Ticket</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Grievance Ticket Ledger -->
+            <div style="margin-top: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--text-dark-primary);">Active Grievance Tickets</span>
+                <button type="button" class="audit-btn" id="refreshGrievancesBtn">Refresh</button>
+              </div>
+              <div class="audit-table-wrap">
+                <table class="audit-table">
+                  <thead>
+                    <tr>
+                      <th>Ticket ID</th>
+                      <th>Created</th>
+                      <th>Category</th>
+                      <th>Mobile</th>
+                      <th>Loan Ref</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="grievanceTableBody">
+                    <tr>
+                      <td colspan="7" style="text-align: center; color: var(--text-dark-muted); padding: 18px;">Loading tickets...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature 7: Try Before You Apply (Anonymous Sandbox) Container -->
+        <div id="anonSimModeContainer" style="display: none;">
+          <div class="sim-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h2 class="sim-title">Try Before You Apply</h2>
+              <span class="memo-badge" style="background: rgba(191, 255, 7, 0.2); color: #0C120F;">No Login Required</span>
+            </div>
+            <p class="sim-subtitle">Simulate borrowing parameters anonymously without creating an account or impacting your credit bureau file.</p>
+
+            <div class="sim-slider-row" style="margin-top: 18px;">
+              <div class="sim-slider-header">
+                <span class="sim-slider-label">Desired Principal Amount</span>
+                <span class="sim-slider-val" id="anonLoanVal">$20,000</span>
+              </div>
+              <input type="range" class="sim-range" id="anonLoanRange" min="1000" max="250000" step="1000" value="20000">
+            </div>
+
+            <div class="sim-slider-row">
+              <div class="sim-slider-header">
+                <span class="sim-slider-label">Annual Gross Income</span>
+                <span class="sim-slider-val" id="anonIncomeVal">$80,000</span>
+              </div>
+              <input type="range" class="sim-range" id="anonIncomeRange" min="10000" max="500000" step="2500" value="80000">
+            </div>
+
+            <div class="sim-slider-row">
+              <div class="sim-slider-header">
+                <span class="sim-slider-label">Expected Interest Rate (% APR)</span>
+                <span class="sim-slider-val" id="anonRateVal">7.5%</span>
+              </div>
+              <input type="range" class="sim-range" id="anonRateRange" min="1.0" max="30.0" step="0.25" value="7.5">
+            </div>
+
+            <div class="sim-slider-row">
+              <div class="sim-slider-header">
+                <span class="sim-slider-label">Repayment Tenure</span>
+                <span class="sim-slider-val" id="anonTermVal">48 Months</span>
+              </div>
+              <div class="term-btn-group" id="anonTermBtnGroup">
+                <button type="button" class="term-btn" data-term="12">12M</button>
+                <button type="button" class="term-btn" data-term="24">24M</button>
+                <button type="button" class="term-btn" data-term="36">36M</button>
+                <button type="button" class="term-btn active" data-term="48">48M</button>
+                <button type="button" class="term-btn" data-term="60">60M</button>
+                <button type="button" class="term-btn" data-term="72">72M</button>
+              </div>
+            </div>
+
+            <div class="sim-kpi-grid">
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Monthly EMI</div>
+                <div class="sim-kpi-val" id="anonKpiEmi">$483.58</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Debt-to-Income (DTI)</div>
+                <div class="sim-kpi-val" id="anonKpiDti">7.3%</div>
+                <div class="health-pill emerald" id="anonHealthPill">Optimal (Affordable)</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Total Interest</div>
+                <div class="sim-kpi-val" id="anonKpiInterest">$3,211.84</div>
+              </div>
+              <div class="sim-kpi-box">
+                <div class="sim-kpi-lbl">Rate Limit Remaining</div>
+                <div class="sim-kpi-val" id="anonRateLimitVal">10/10</div>
+              </div>
+            </div>
+
+            <!-- Favorable Eligibility Banner -->
+            <div id="anonEligibilityBanner" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 18px; margin-top: 18px; text-align: center;">
+              <div style="font-size: 15px; font-weight: 700; color: #059669; margin-bottom: 6px;" id="anonEligibilityMsg">
+                Your simulated profile meets the current eligibility criteria.
+              </div>
+              <p style="font-size: 12px; color: var(--text-dark-muted); margin-bottom: 14px;">Pre-populate your validated loan terms directly into the institutional underwriting portal.</p>
+              <button type="button" class="primary-btn" id="anonStartAppBtn" style="margin: 0 auto;">
+                <span>Start Application</span>
+                <svg viewBox="0 0 16 16" fill="none" style="width: 14px; height: 14px; stroke: currentColor; stroke-width: 2;"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- RIGHT COLUMN: Evaluation & Analytics -->
@@ -2259,6 +2845,12 @@
             <span class="memo-badge" id="resRiskTierBadge" style="background: rgba(16, 185, 129, 0.15); color: #059669;">Tier A+</span>
           </div>
 
+          <!-- Dual Result Toggle (When Co-Applicant is evaluated) -->
+          <div id="dualResultToggleBar" class="dual-toggle-bar" style="display: none; margin-bottom: 12px;">
+            <button type="button" class="dual-toggle-btn active" id="btnDualInd">Individual Evaluation</button>
+            <button type="button" class="dual-toggle-btn" id="btnDualHse">Household Pooled Evaluation</button>
+          </div>
+
           <div class="result-status" id="resultStatus">
             <span class="badge-dot"></span>
             <span id="resultText">—</span>
@@ -2291,6 +2883,17 @@
             <div style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: #DC2626; margin-bottom: 4px;">Risk Markers & Monitoring:</div>
             <ul id="resMemoRisksList" style="padding-left: 18px; color: var(--text-dark-secondary); font-size: 11.5px; line-height: 1.4;">
             </ul>
+
+            <!-- Feature 5: Visual / Icon-Based Credit Explanations -->
+            <div id="resIconExplainBox" style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--dash-border);">
+              <div style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--text-dark-primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; color: #10B981;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span>Visual Credit Insights (Low-Literacy Aid)</span>
+              </div>
+              <div id="resIconExplainGrid" style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                <!-- Dynamically populated icon cards -->
+              </div>
+            </div>
 
             <!-- Automated Counter-Offer (for rejected applications) -->
             <div class="counter-offer-card" id="resCounterOfferCard" style="display: none;">
@@ -2758,6 +3361,15 @@
     return ok;
   }
 
+  // Co-Applicant Toggle Listener
+  const coAppToggle = document.getElementById('coAppToggle');
+  const coAppSection = document.getElementById('coAppFieldsContainer');
+  if (coAppToggle && coAppSection) {
+    coAppToggle.addEventListener('change', () => {
+      coAppSection.style.display = coAppToggle.checked ? 'block' : 'none';
+    });
+  }
+
   // ---- submit ----
   form.addEventListener('submit', async function(e){
     e.preventDefault();
@@ -2778,6 +3390,24 @@
       loan_percent_income: parseFloat(fields.percent.value),
       previous_loan_defaults_on_file: getDefaultValue(),
     };
+
+    // Feature 3: Co-Applicant Household Income Pooling
+    if (coAppToggle && coAppToggle.checked) {
+      const coName = (document.getElementById('coAppName')?.value || '').trim();
+      const coIncome = parseFloat(document.getElementById('coAppIncome')?.value) || 0;
+      const coEmp = document.getElementById('coAppEmployment')?.value || 'Salaried';
+
+      if (!coName || coIncome <= 0) {
+        showToast('Please enter the co-applicant\'s full name and annual income.', true);
+        return;
+      }
+
+      payload.co_applicant = {
+        name: coName,
+        income: coIncome,
+        employment: coEmp
+      };
+    }
 
     submitBtn.classList.add('loading');
     submitBtn.disabled = true;
@@ -2853,7 +3483,7 @@
     }
   }
 
-  function renderResult(result){
+  function renderSingleOutcome(result, isHousehold){
     const card = document.getElementById('resultCard');
     const status = document.getElementById('resultStatus');
     const text = document.getElementById('resultText');
@@ -2875,12 +3505,12 @@
     // Application ID & Risk Grade Badges
     const appIdBadge = document.getElementById('resAppIdBadge');
     if (appIdBadge && result.application_id) {
-      appIdBadge.textContent = result.application_id;
+      appIdBadge.textContent = result.application_id + (isHousehold ? ' [Pooled]' : '');
     }
 
     const riskTierBadge = document.getElementById('resRiskTierBadge');
     if (riskTierBadge && result.risk_grade) {
-      riskTierBadge.textContent = result.risk_grade;
+      riskTierBadge.textContent = (isHousehold ? 'Household ' : '') + result.risk_grade;
       if (approved) {
         riskTierBadge.style.background = 'rgba(16, 185, 129, 0.15)';
         riskTierBadge.style.color = '#059669';
@@ -2904,24 +3534,93 @@
     if (memoBox && result.underwriting_memo) {
       memoBox.style.display = 'block';
       const memo = result.underwriting_memo;
-      document.getElementById('resMemoTimestamp').textContent = memo.generated_at || '';
-      document.getElementById('resMemoSummaryText').textContent = memo.summary || '';
+      const tsEl = document.getElementById('resMemoTimestamp');
+      if (tsEl) tsEl.textContent = memo.generated_at || '';
+      const smEl = document.getElementById('resMemoSummaryText');
+      if (smEl) smEl.textContent = memo.summary || '';
       
       const strengthsList = document.getElementById('resMemoStrengthsList');
-      strengthsList.innerHTML = '';
-      (memo.strengths || []).forEach(str => {
-        const li = document.createElement('li');
-        li.textContent = str;
-        strengthsList.appendChild(li);
-      });
+      if (strengthsList) {
+        strengthsList.innerHTML = '';
+        (memo.strengths || []).forEach(str => {
+          const li = document.createElement('li');
+          li.textContent = str;
+          strengthsList.appendChild(li);
+        });
+      }
 
       const risksList = document.getElementById('resMemoRisksList');
-      risksList.innerHTML = '';
-      (memo.risk_factors || []).forEach(rsk => {
-        const li = document.createElement('li');
-        li.textContent = rsk;
-        risksList.appendChild(li);
-      });
+      if (risksList) {
+        risksList.innerHTML = '';
+        (memo.risk_factors || []).forEach(rsk => {
+          const li = document.createElement('li');
+          li.textContent = rsk;
+          risksList.appendChild(li);
+        });
+      }
+
+      // Feature 5: Visual Icon-Based Explanations
+      const iconGrid = document.getElementById('resIconExplainGrid');
+      const iconBox = document.getElementById('resIconExplainBox');
+      if (iconGrid && iconBox) {
+        const iconList = result.icon_explanation || [];
+        if (iconList.length > 0) {
+          iconBox.style.display = 'block';
+          iconGrid.innerHTML = '';
+          iconList.forEach(item => {
+            const isPos = item.direction === 'positive';
+            const mag = item.magnitude || 0;
+            let magClass = 'low';
+            let magLabel = 'Low Impact';
+            if (mag >= 0.35) { magClass = 'high'; magLabel = 'High Impact'; }
+            else if (mag >= 0.15) { magClass = 'medium'; magLabel = 'Medium Impact'; }
+
+            let iconSvg = '';
+            if (item.icon === 'coins') {
+              iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="8" cy="8" r="6"/><path d="M18 9v11a2 2 0 0 1-2 2H4"/><path d="M14 6a6 6 0 0 1 6 6v3"/></svg>`;
+            } else if (item.icon === 'scale') {
+              iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>`;
+            } else if (item.icon === 'percent') {
+              iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>`;
+            } else if (item.icon === 'home') {
+              iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
+            } else if (item.icon === 'warning') {
+              iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+            } else {
+              iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`;
+            }
+
+            let plainDesc = item.explanation;
+            if (!plainDesc) {
+              if (item.feature === 'person_income') plainDesc = isPos ? 'Higher income provides strong capacity to repay.' : 'Reported income limits borrowing ceiling.';
+              else if (item.feature === 'loan_percent_income') plainDesc = isPos ? 'Conservative loan percentage ensures manageable monthly repayments.' : 'High debt-to-income ratio increases risk.';
+              else if (item.feature === 'loan_int_rate') plainDesc = isPos ? 'Favorable interest rate reduces interest accumulation.' : 'Higher interest rate increases borrowing expense.';
+              else if (item.feature && item.feature.includes('default')) plainDesc = isPos ? 'Clean credit file confirms reliable repayment discipline.' : 'Past defaults indicate heightened repayment risk.';
+              else if (item.feature && item.feature.includes('ownership')) plainDesc = isPos ? 'Home ownership provides residential and asset stability.' : 'Rental status factored into credit baseline.';
+              else plainDesc = isPos ? 'Favorable algorithmic contribution towards loan approval.' : 'Noted as a risk factor during underwriting evaluation.';
+            }
+
+            const cardDiv = document.createElement('div');
+            cardDiv.className = `icon-card ${isPos ? 'pos' : 'neg'} ${magClass}`;
+            cardDiv.innerHTML = `
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span class="icon-wrap" style="color: ${isPos ? '#10B981' : '#EF4444'};">${iconSvg}</span>
+                  <strong style="font-size:12px; color:var(--text-dark-primary);">${item.label || item.feature}</strong>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <span class="mag-pill ${magClass}">${magLabel}</span>
+                  <span class="dir-badge ${isPos ? 'pos' : 'neg'}">${isPos ? '✓ Helpful' : '⚠ Risk'}</span>
+                </div>
+              </div>
+              <p style="font-size:11px; color:var(--text-dark-secondary); line-height:1.4; margin:0;">${plainDesc}</p>
+            `;
+            iconGrid.appendChild(cardDiv);
+          });
+        } else {
+          iconBox.style.display = 'none';
+        }
+      }
 
       // Viable Counter-Offer (if declined)
       const counterOfferCard = document.getElementById('resCounterOfferCard');
@@ -2982,6 +3681,34 @@
     card.scrollIntoView({behavior:'smooth', block:'nearest'});
   }
 
+  function renderResult(result){
+    const dualToggleBar = document.getElementById('dualResultToggleBar');
+    const btnDualInd = document.getElementById('btnDualInd');
+    const btnDualHse = document.getElementById('btnDualHse');
+
+    if (result.pooled === true && result.individual && result.household) {
+      if (dualToggleBar) dualToggleBar.style.display = 'flex';
+
+      btnDualInd.onclick = () => {
+        btnDualInd.classList.add('active');
+        btnDualHse.classList.remove('active');
+        renderSingleOutcome(result.individual, false);
+      };
+      btnDualHse.onclick = () => {
+        btnDualHse.classList.add('active');
+        btnDualInd.classList.remove('active');
+        renderSingleOutcome(result.household, true);
+      };
+
+      btnDualHse.classList.add('active');
+      btnDualInd.classList.remove('active');
+      renderSingleOutcome(result.household, true);
+    } else {
+      if (dualToggleBar) dualToggleBar.style.display = 'none';
+      renderSingleOutcome(result, false);
+    }
+  }
+
   // Print Decision Memo Handler
   const printDecisionMemoBtn = document.getElementById('printDecisionMemoBtn');
   if (printDecisionMemoBtn) {
@@ -3000,6 +3727,10 @@
     document.getElementById('explainPanel').style.display = 'none';
     const memoBox = document.getElementById('resMemoBox');
     if (memoBox) memoBox.style.display = 'none';
+    const dualToggleBar = document.getElementById('dualResultToggleBar');
+    if (dualToggleBar) dualToggleBar.style.display = 'none';
+    const coAppSec = document.getElementById('coAppSection');
+    if (coAppSec) coAppSec.style.display = 'none';
     updateSignals();
   }
   resetBtn.addEventListener('click', resetForm);
@@ -3009,44 +3740,754 @@
     hearResultBtn.addEventListener('click', speakPredictionResult);
   }
 
-  // ---- Interactive Tab Switching (Form, Voice, Simulator, Audit) ----
-  const formTabBtn = document.querySelector('[data-tab="form"]');
-  const voiceTabBtn = document.querySelector('[data-tab="voice"]');
-  const simTabBtn = document.querySelector('[data-tab="simulator"]');
-  const auditTabBtn = document.querySelector('[data-tab="audit"]');
-
-  const formModeContainer = document.getElementById('formModeContainer');
-  const voiceModeContainer = document.getElementById('voiceModeContainer');
-  const simulatorModeContainer = document.getElementById('simulatorModeContainer');
-  const auditModeContainer = document.getElementById('auditModeContainer');
+  // ---- Interactive Tab Switching (Form, Voice, Simulator, Repayment, Restructuring, Safety, Grievances, AnonSim, Audit) ----
+  const allContainers = {
+    form: document.getElementById('formModeContainer'),
+    voice: document.getElementById('voiceModeContainer'),
+    simulator: document.getElementById('simulatorModeContainer'),
+    repayment: document.getElementById('repaymentModeContainer'),
+    restructuring: document.getElementById('restructuringModeContainer'),
+    safety: document.getElementById('safetyModeContainer'),
+    grievances: document.getElementById('grievancesModeContainer'),
+    anonsim: document.getElementById('anonSimModeContainer'),
+    audit: document.getElementById('auditModeContainer')
+  };
 
   function switchTab(tabName) {
-    [formTabBtn, voiceTabBtn, simTabBtn, auditTabBtn].forEach(btn => {
-      if (btn) btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
+    document.querySelectorAll('[data-tab]').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
     });
 
-    if (formModeContainer) formModeContainer.style.display = (tabName === 'form') ? 'block' : 'none';
-    if (voiceModeContainer) voiceModeContainer.style.display = (tabName === 'voice') ? 'block' : 'none';
-    if (simulatorModeContainer) simulatorModeContainer.style.display = (tabName === 'simulator') ? 'block' : 'none';
-    if (auditModeContainer) auditModeContainer.style.display = (tabName === 'audit') ? 'block' : 'none';
+    Object.entries(allContainers).forEach(([key, el]) => {
+      if (el) el.style.display = (key === tabName) ? 'block' : 'none';
+    });
 
     if (tabName === 'voice') renderVoiceStep();
     if (tabName === 'simulator') updateSimulator();
     if (tabName === 'audit') loadApplications();
+    if (tabName === 'grievances') loadGrievances();
+    if (tabName === 'anonsim') updateAnonSim();
+    if (tabName === 'repayment') {
+      const today = new Date().toISOString().split('T')[0];
+      const cycleDateEl = document.getElementById('repayCycleDate');
+      if (cycleDateEl && !cycleDateEl.value) cycleDateEl.value = today;
+    }
   }
 
-  if (formTabBtn) formTabBtn.addEventListener('click', () => switchTab('form'));
-  if (voiceTabBtn) voiceTabBtn.addEventListener('click', () => switchTab('voice'));
-  if (simTabBtn) simTabBtn.addEventListener('click', () => switchTab('simulator'));
-  if (auditTabBtn) auditTabBtn.addEventListener('click', () => switchTab('audit'));
+  document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
+  });
 
   // Topbar nav links
-  const navUnderwriting = document.getElementById('navUnderwriting');
-  const navSimulator = document.getElementById('navSimulator');
-  const navAudit = document.getElementById('navAudit');
-  if (navUnderwriting) navUnderwriting.addEventListener('click', () => switchTab('form'));
-  if (navSimulator) navSimulator.addEventListener('click', () => switchTab('simulator'));
-  if (navAudit) navAudit.addEventListener('click', () => switchTab('audit'));
+  if (document.getElementById('navUnderwriting')) document.getElementById('navUnderwriting').addEventListener('click', () => switchTab('form'));
+  if (document.getElementById('navSimulator')) document.getElementById('navSimulator').addEventListener('click', () => switchTab('simulator'));
+  if (document.getElementById('navRepayment')) document.getElementById('navRepayment').addEventListener('click', () => switchTab('repayment'));
+  if (document.getElementById('navRestructuring')) document.getElementById('navRestructuring').addEventListener('click', () => switchTab('restructuring'));
+  if (document.getElementById('navSafety')) document.getElementById('navSafety').addEventListener('click', () => switchTab('safety'));
+  if (document.getElementById('navGrievances')) document.getElementById('navGrievances').addEventListener('click', () => switchTab('grievances'));
+  if (document.getElementById('navAnonSim')) document.getElementById('navAnonSim').addEventListener('click', () => switchTab('anonsim'));
+  if (document.getElementById('navAudit')) document.getElementById('navAudit').addEventListener('click', () => switchTab('audit'));
+
+  // Public tools direct access from login overlay
+  const overlaySafetyBtn = document.getElementById('overlaySafetyBtn');
+  if (overlaySafetyBtn) {
+    overlaySafetyBtn.addEventListener('click', () => {
+      loginOverlay.style.opacity = '0';
+      loginOverlay.style.visibility = 'hidden';
+      switchTab('safety');
+    });
+  }
+  const overlayAnonSimBtn = document.getElementById('overlayAnonSimBtn');
+  if (overlayAnonSimBtn) {
+    overlayAnonSimBtn.addEventListener('click', () => {
+      loginOverlay.style.opacity = '0';
+      loginOverlay.style.visibility = 'hidden';
+      switchTab('anonsim');
+    });
+  }
+
+  // =========================================================
+  // Feature 1: Repayment Health Tracker Implementation
+  // =========================================================
+  const repayLogForm = document.getElementById('repayLogForm');
+  const repayLoadHistoryBtn = document.getElementById('repayLoadHistoryBtn');
+
+  async function fetchRepaymentHistory(loanId) {
+    if (!loanId) return;
+    const tbody = document.getElementById('repayTableBody');
+    const badge = document.getElementById('repayDistressBadge');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-dark-muted); padding: 18px;">Loading cycle history...</td></tr>';
+
+    try {
+      const res = await fetch(`/repayment/history/${encodeURIComponent(loanId)}`);
+      if (!res.ok) throw new Error("Could not fetch repayment records");
+      const data = await res.json();
+      const records = data.history || data.repayments || [];
+      const isDistressed = data.current_distress !== undefined ? data.current_distress : data.distress_detected;
+
+      if (badge) {
+        if (isDistressed) {
+          badge.style.background = 'rgba(239, 68, 68, 0.15)';
+          badge.style.color = '#DC2626';
+          badge.textContent = 'Distress Detected (>40% DTI / Consecutive Increases)';
+        } else {
+          badge.style.background = 'rgba(16, 185, 129, 0.15)';
+          badge.style.color = '#059669';
+          badge.textContent = 'Normal Health';
+        }
+      }
+
+      if (records.length === 0) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-dark-muted); padding: 18px;">No repayment cycles recorded for this loan.</td></tr>';
+        renderRepayChart([]);
+        return;
+      }
+
+      // Update KPI cards using latest record
+      const latest = records[records.length - 1];
+      const prev = records.length >= 2 ? records[records.length - 2] : null;
+      const curDti = document.getElementById('repayKpiCurrentDti');
+      const prevDti = document.getElementById('repayKpiPrevDti');
+      const emiDue = document.getElementById('repayKpiEmiDue');
+      const emiPaid = document.getElementById('repayKpiEmiPaid');
+
+      const latestDtiVal = latest.updated_dti !== undefined ? latest.updated_dti : (latest.dti_ratio * 100);
+      if (curDti) curDti.textContent = Number(latestDtiVal).toFixed(1) + '%';
+      if (prevDti) {
+        const prevDtiVal = prev ? (prev.updated_dti !== undefined ? prev.updated_dti : (prev.dti_ratio * 100)) : null;
+        prevDti.textContent = prevDtiVal !== null ? Number(prevDtiVal).toFixed(1) + '%' : '—%';
+      }
+      if (emiDue) emiDue.textContent = '₹' + Math.round(latest.emi_due).toLocaleString('en-IN');
+      const paidVal = latest.emi_paid !== undefined ? latest.emi_paid : latest.amount_paid;
+      if (emiPaid) emiPaid.textContent = '₹' + Math.round(paidVal || 0).toLocaleString('en-IN');
+
+      // Populate Table
+      if (tbody) {
+        tbody.innerHTML = '';
+        records.slice().reverse().forEach(r => {
+          const tr = document.createElement('tr');
+          const rowDti = r.updated_dti !== undefined ? r.updated_dti : (r.dti_ratio * 100);
+          const dtiPct = Number(rowDti).toFixed(1) + '%';
+          const rowDistress = r.distress_flag !== undefined ? r.distress_flag : (r.distress_detected || rowDti > 40.0);
+          const cDate = r.cycle_date || r.payment_date || '—';
+          const rPaid = r.emi_paid !== undefined ? r.emi_paid : r.amount_paid;
+          tr.innerHTML = `
+            <td><strong>${cDate}</strong></td>
+            <td>₹${Math.round(r.emi_due).toLocaleString('en-IN')}</td>
+            <td>₹${Math.round(rPaid || 0).toLocaleString('en-IN')}</td>
+            <td>₹${Math.round(r.updated_income || 0).toLocaleString('en-IN')}</td>
+            <td><strong style="color: ${rowDti > 40.0 ? '#DC2626' : '#10B981'};">${dtiPct}</strong></td>
+            <td><span class="status-badge ${rowDistress ? 'decl' : 'appr'}">${rowDistress ? 'Distress Flag' : 'Healthy'}</span></td>
+            <td>
+              ${rowDistress ? `<button type="button" class="audit-btn" style="padding: 3px 8px; font-size: 11px; color:#D97706;" onclick="jumpToRestructure('${r.loan_id || loanId}')">Restructure</button>` : '—'}
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Draw SVG chart
+      renderRepayChart(records);
+
+    } catch (e) {
+      if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #DC2626; padding: 18px;">${e.message}</td></tr>`;
+    }
+  }
+
+  function renderRepayChart(records) {
+    const svg = document.getElementById('repaySvgChart');
+    if (!svg) return;
+    svg.innerHTML = `
+      <line x1="40" y1="60" x2="490" y2="60" stroke="#EF4444" stroke-dasharray="4 4" stroke-width="1.5"/>
+      <text x="490" y="55" fill="#EF4444" font-size="9" text-anchor="end" font-weight="bold">40% Limit</text>
+    `;
+
+    if (!records || records.length === 0) {
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", "250");
+      text.setAttribute("y", "85");
+      text.setAttribute("fill", "#94A3B8");
+      text.setAttribute("font-size", "12");
+      text.setAttribute("text-anchor", "middle");
+      text.textContent = "No cycle data logged yet";
+      svg.appendChild(text);
+      return;
+    }
+
+    const n = records.length;
+    const startX = 50;
+    const endX = 480;
+    const stepX = n > 1 ? (endX - startX) / (n - 1) : 0;
+    const chartY0 = 130; // 0%
+    const chartYMax = 20; // 60% DTI
+
+    let points = [];
+    records.forEach((r, idx) => {
+      const x = n === 1 ? 250 : startX + idx * stepX;
+      const dtiVal = r.updated_dti !== undefined ? r.updated_dti : (r.dti_ratio * 100);
+      const dtiClamped = Math.min(60.0, Math.max(0, dtiVal));
+      const y = chartY0 - (dtiClamped / 60.0) * (chartY0 - chartYMax);
+      points.push(`${x},${y}`);
+
+      // Circle dot
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", x);
+      circle.setAttribute("cy", y);
+      circle.setAttribute("r", "4");
+      circle.setAttribute("fill", dtiVal > 40.0 ? "#EF4444" : "#10B981");
+      svg.appendChild(circle);
+
+      // Label
+      const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      txt.setAttribute("x", x);
+      txt.setAttribute("y", y - 8);
+      txt.setAttribute("fill", "#334155");
+      txt.setAttribute("font-size", "9");
+      txt.setAttribute("text-anchor", "middle");
+      txt.textContent = Number(dtiVal).toFixed(0) + "%";
+      svg.appendChild(txt);
+    });
+
+    const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    polyline.setAttribute("fill", "none");
+    polyline.setAttribute("stroke", "#10B981");
+    polyline.setAttribute("stroke-width", "2.5");
+    polyline.setAttribute("points", points.join(" "));
+    svg.insertBefore(polyline, svg.firstChild);
+  }
+
+  window.jumpToRestructure = function(loanId) {
+    const input = document.getElementById('restrLoanIdInput');
+    if (input) input.value = loanId;
+    switchTab('restructuring');
+    const btn = document.getElementById('restrSuggestBtn');
+    if (btn) btn.click();
+  };
+
+  if (repayLogForm) {
+    repayLogForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const loanId = document.getElementById('repayLoanId').value.trim();
+      const cycleDate = document.getElementById('repayCycleDate').value;
+      const emiDue = parseFloat(document.getElementById('repayEmiDue').value) || 0;
+      const emiPaid = parseFloat(document.getElementById('repayEmiPaid').value) || 0;
+      const inc = parseFloat(document.getElementById('repayUpdatedIncome')?.value) || 0;
+
+      const submitBtn = document.getElementById('repaySubmitBtn');
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        const payload = {
+          loan_id: loanId,
+          cycle_date: cycleDate,
+          emi_due: emiDue,
+          emi_paid: emiPaid,
+          updated_income: inc > 0 ? inc : undefined
+        };
+
+        const res = await fetch('/repayment/log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(()=>({}));
+          throw new Error(err.detail || 'Failed to log repayment');
+        }
+
+        const data = await res.json();
+        showToast(data.message || 'Repayment logged successfully!', false);
+        if (data.distress_flag || data.distress_detected) {
+          showToast('⚠️ Early distress detected! Restructuring recommended.', true);
+        }
+        await fetchRepaymentHistory(loanId);
+      } catch (err) {
+        showToast(err.message, true);
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+
+  if (repayLoadHistoryBtn) {
+    repayLoadHistoryBtn.addEventListener('click', () => {
+      const loanId = document.getElementById('repayLoanId').value.trim();
+      if (!loanId) {
+        showToast('Please enter a Loan ID to fetch history', true);
+        return;
+      }
+      fetchRepaymentHistory(loanId);
+    });
+  }
+
+  // =========================================================
+  // Feature 2: Early Distress -> Restructuring Nudge Implementation
+  // =========================================================
+  const restrSuggestBtn = document.getElementById('restrSuggestBtn');
+  const restrOffersContainer = document.getElementById('restrOffersContainer');
+  const restrContextBox = document.getElementById('restrContextBox');
+
+  if (restrSuggestBtn) {
+    restrSuggestBtn.addEventListener('click', async () => {
+      const loanId = (document.getElementById('restrLoanIdInput')?.value || '').trim();
+      if (!loanId) {
+        showToast('Please enter a Loan ID to generate restructuring plans.', true);
+        return;
+      }
+
+      restrSuggestBtn.disabled = true;
+      restrOffersContainer.innerHTML = '<div style="text-align: center; color: var(--text-dark-muted); padding: 30px;">Evaluating DiCE counterfactual restructuring schedule...</div>';
+
+      try {
+        const res = await fetch(`/restructure/suggest/${encodeURIComponent(loanId)}`, { method: 'POST' });
+        if (!res.ok) {
+          const err = await res.json().catch(()=>({}));
+          throw new Error(err.detail || 'Could not fetch restructuring plans');
+        }
+
+        const data = await res.json();
+        const offers = data.options || data.offers || [];
+        const offerId = data.offer_id;
+
+        if (restrContextBox) {
+          restrContextBox.style.display = 'block';
+          const curDtiNum = typeof data.current_dti === 'number' && data.current_dti <= 1.0 ? (data.current_dti * 100) : data.current_dti;
+          document.getElementById('restrCurrentDtiVal').textContent = Number(curDtiNum).toFixed(1) + '%';
+          document.getElementById('restrCurrentEmiVal').textContent = '₹' + Math.round(data.current_emi || data.current_monthly_emi || 0).toLocaleString('en-IN');
+        }
+
+        if (offers.length === 0) {
+          restrOffersContainer.innerHTML = '<div style="text-align: center; color: var(--text-dark-muted); padding: 30px;">No restructuring plans required or available. Borrower may be healthy.</div>';
+          return;
+        }
+
+        restrOffersContainer.innerHTML = '';
+        offers.forEach((offer, idx) => {
+          const card = document.createElement('div');
+          card.className = 'restructure-card';
+          const thisOfferId = offer.offer_id || offerId;
+          card.id = `restr-card-${thisOfferId}-${idx}`;
+          const tenureMonths = offer.new_tenure || offer.tenure_extension_months || 60;
+          const newEmi = Math.round(offer.new_emi || offer.new_monthly_emi || 0);
+          const resDti = typeof offer.resulting_dti === 'number' && offer.resulting_dti <= 1.0 ? (offer.resulting_dti * 100).toFixed(1) : Number(offer.resulting_dti || 0).toFixed(1);
+          const optTitle = offer.option || `Plan ${idx + 1}`;
+          const explanation = offer.explanation || offer.rationalization || 'Restructured debt repayment profile to relieve financial stress.';
+
+          card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span class="tenure-badge">${optTitle} — ${tenureMonths}M Tenure</span>
+              <span style="font-size: 13px; font-weight: 700; color: #059669;">New EMI: ₹${newEmi.toLocaleString('en-IN')} /mo</span>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-dark-secondary); line-height: 1.5; margin-bottom: 12px;">${explanation}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--text-dark-muted); margin-bottom: 14px;">
+              <span>Resulting DTI: <strong style="color: #059669;">${resDti}%</strong></span>
+              <span>Tenure: <strong>${tenureMonths} Months</strong></span>
+              <span>Status: <strong id="status-${thisOfferId}">${data.status ? data.status.toUpperCase() : 'PENDING'}</strong></span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button type="button" class="primary-btn" style="padding: 6px 14px; font-size: 12px;" onclick="respondRestructure('${thisOfferId}', '${loanId}', 'accepted')">
+                <span>Accept Plan</span>
+              </button>
+              <button type="button" class="audit-btn" style="padding: 6px 14px; font-size: 12px; color: #DC2626;" onclick="respondRestructure('${thisOfferId}', '${loanId}', 'declined')">
+                <span>Decline</span>
+              </button>
+            </div>
+          `;
+          restrOffersContainer.appendChild(card);
+        });
+
+      } catch (e) {
+        restrOffersContainer.innerHTML = `<div style="text-align: center; color: #DC2626; padding: 24px;">${e.message}</div>`;
+      } finally {
+        restrSuggestBtn.disabled = false;
+      }
+    });
+  }
+
+  window.respondRestructure = async function(offerId, loanId, decision) {
+    try {
+      const res = await fetch('/restructure/respond', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ offer_id: offerId, status: decision.toLowerCase() })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(()=>({}));
+        throw new Error(err.detail || "Failed to record decision");
+      }
+      const stEl = document.getElementById(`status-${offerId}`);
+      if (stEl) stEl.textContent = decision.toUpperCase();
+      showToast(`Restructuring offer ${decision.toLowerCase()} successfully! Webhook dispatched.`, false);
+    } catch (e) {
+      showToast(e.message, true);
+    }
+  };
+
+  // =========================================================
+  // Feature 4: Digital Lending Safety Checker Implementation
+  // =========================================================
+  const safetyCheckForm = document.getElementById('safetyCheckForm');
+  if (safetyCheckForm) {
+    safetyCheckForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const lenderName = (document.getElementById('safetyLenderName')?.value || 'Digital Lending Provider').trim();
+      const interestRate = (document.getElementById('safetyInterestRate')?.value || '').trim();
+      const feesStr = (document.getElementById('safetyFees')?.value || '').trim();
+      const tenureStr = (document.getElementById('safetyTenure')?.value || '').trim();
+
+      const hasApr = document.getElementById('chkApr')?.checked || false;
+      const hasFees = document.getElementById('chkFees')?.checked || false;
+      const hasReg = document.getElementById('chkReg')?.checked || false;
+      const hasGrievance = document.getElementById('chkGrievance')?.checked || false;
+      const hasCooling = document.getElementById('chkCooling')?.checked || false;
+
+      const disclosures = [];
+      if (hasApr) disclosures.push("APR Key Fact Statement");
+      if (hasFees) disclosures.push("Itemized schedule of charges");
+      if (hasReg) disclosures.push("RBI NBFC Registration License");
+      if (hasGrievance) disclosures.push("Nodal Grievance Officer details");
+      if (hasCooling) disclosures.push("Cooling-off look-up exit window");
+
+      const payload = {
+        lender_name: lenderName,
+        stated_interest_rate: interestRate || (hasApr ? "18% APR" : undefined),
+        fees: feesStr ? [feesStr] : (hasFees ? ["Processing fee 2%"] : []),
+        tenure: tenureStr || "12 Months",
+        disclosures_provided: disclosures,
+        cooling_off_period: hasCooling ? "3 days" : undefined,
+        grievance_channel: hasGrievance ? "grievance@lender.com" : undefined,
+        registration_number: hasReg ? "RBI-NBFC-12345" : undefined,
+        apr_disclosed: hasApr,
+        grievance_officer_named: hasGrievance,
+        recovery_agent_code: hasFees,
+        data_privacy_policy: hasReg
+      };
+
+      try {
+        const res = await fetch('/safety-check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error("Safety check failed");
+        const data = await res.json();
+
+        const resultsBox = document.getElementById('safetyResultsBox');
+        const badge = document.getElementById('safetyCompletenessBadge');
+        const flagsList = document.getElementById('safetyFlagsList');
+        const disclaimerEl = document.getElementById('safetyDisclaimerText');
+
+        if (resultsBox) resultsBox.style.display = 'block';
+        if (badge) {
+          const comp = (data.disclosure_completeness || 'partial').toUpperCase();
+          badge.textContent = `${comp} (${data.provided_count || data.score || 0}/${data.total_required || 5} Verified)`;
+          badge.className = `status-badge ${data.disclosure_completeness === 'complete' ? 'appr' : (data.disclosure_completeness === 'partial' ? 'warn' : 'decl')}`;
+        }
+
+        if (disclaimerEl && data.disclaimer) {
+          disclaimerEl.textContent = data.disclaimer;
+        }
+
+        if (flagsList && data.flags) {
+          flagsList.innerHTML = '';
+          data.flags.forEach(d => {
+            const isProvided = d.status === 'provided';
+            const item = document.createElement('div');
+            item.className = 'safety-flag-item';
+            item.innerHTML = `
+              <span class="flag-icon" style="color: ${isProvided ? '#10B981' : '#EF4444'}; font-size: 16px;">
+                ${isProvided ? '✓' : '⚠️'}
+              </span>
+              <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong>${d.item}</strong>
+                  <span style="font-size: 11px; font-weight: 700; color: ${isProvided ? '#059669' : '#DC2626'}; text-transform: uppercase;">
+                    ${isProvided ? 'Provided' : 'Missing'}
+                  </span>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-dark-muted); margin: 3px 0 0; line-height: 1.4;">
+                  ${d.guidance || ''}
+                </p>
+              </div>
+            `;
+            flagsList.appendChild(item);
+          });
+        }
+
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+  }
+
+  // =========================================================
+  // Feature 6: Grievance & Query Routing Implementation
+  // =========================================================
+  const grievanceSubmitForm = document.getElementById('grievanceSubmitForm');
+  const runEscalationBtn = document.getElementById('runEscalationBtn');
+  const refreshGrievancesBtn = document.getElementById('refreshGrievancesBtn');
+
+  async function loadGrievances() {
+    const tbody = document.getElementById('grievanceTableBody');
+    const avgTimeEl = document.getElementById('grievanceAvgTime');
+    const totalCountEl = document.getElementById('grievanceTotalCount');
+
+    if (!tbody) return;
+    try {
+      const res = await fetch('/grievance/list');
+      if (!res.ok) throw new Error("Grievances ledger fetch failed");
+      const data = await res.json();
+      const list = data.grievances || [];
+
+      if (avgTimeEl) avgTimeEl.textContent = (data.average_resolution_hours || 0).toFixed(1) + ' hrs';
+      if (totalCountEl) totalCountEl.textContent = data.total_tickets || list.length;
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-dark-muted); padding: 18px;">No active grievance tickets.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = '';
+      list.forEach(g => {
+        const tr = document.createElement('tr');
+        const ticketId = g.id || g.ticket_id;
+        const mobile = g.applicant_mobile || g.mobile_number || '—';
+        const st = (g.status || 'open').toLowerCase();
+        const isEscalated = st === 'escalated' || g.escalation_notified;
+
+        let badgeClass = '';
+        if (st === 'resolved') badgeClass = 'appr';
+        else if (isEscalated) badgeClass = 'decl';
+        else if (st === 'acknowledged') badgeClass = 'warn';
+
+        tr.innerHTML = `
+          <td><strong style="font-family: var(--font-mono); font-size: 11px;">${ticketId.substring(0, 13)}...</strong></td>
+          <td style="font-size: 11px; color: var(--text-dark-muted);">${g.created_at || '—'}</td>
+          <td><strong>${g.category}</strong></td>
+          <td>${mobile}</td>
+          <td>${g.loan_id || '—'}</td>
+          <td><span class="status-badge ${badgeClass}">${st.toUpperCase()}</span></td>
+          <td>
+            <select style="font-size: 11px; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--dash-border);" onchange="updateGrievanceStatus('${ticketId}', this.value)">
+              <option value="open" ${st === 'open' ? 'selected' : ''}>Open</option>
+              <option value="acknowledged" ${st === 'acknowledged' ? 'selected' : ''}>Acknowledged</option>
+              <option value="escalated" ${st === 'escalated' ? 'selected' : ''}>Escalated</option>
+              <option value="resolved" ${st === 'resolved' ? 'selected' : ''}>Resolved</option>
+            </select>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #DC2626; padding: 18px;">${e.message}</td></tr>`;
+    }
+  }
+
+  window.updateGrievanceStatus = async function(ticketId, newStatus) {
+    try {
+      const res = await fetch('/grievance/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticket_id: ticketId, status: newStatus })
+      });
+      if (!res.ok) throw new Error("Failed to update ticket status");
+      showToast(`Ticket updated to ${newStatus.toUpperCase()}`, false);
+      loadGrievances();
+    } catch (e) {
+      showToast(e.message, true);
+    }
+  };
+
+  if (grievanceSubmitForm) {
+    grievanceSubmitForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const loanId = document.getElementById('grievanceLoanId')?.value.trim();
+      const mobile = document.getElementById('grievanceMobile')?.value.trim();
+      const cat = document.getElementById('grievanceCategory')?.value;
+      const desc = document.getElementById('grievanceDesc')?.value.trim();
+
+      if (!mobile) {
+        showToast('Please enter your registered mobile number.', true);
+        return;
+      }
+
+      try {
+        const res = await fetch('/grievance/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            loan_id: loanId || undefined,
+            applicant_mobile: mobile,
+            mobile_number: mobile,
+            category: cat,
+            description: desc
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(()=>({}));
+          throw new Error(err.detail || "Grievance submission failed");
+        }
+        const data = await res.json();
+        showToast(`Ticket #${data.ticket_id.substring(0, 8)} submitted successfully! (24h SLA)`, false);
+        grievanceSubmitForm.reset();
+        loadGrievances();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+  }
+
+  if (runEscalationBtn) {
+    runEscalationBtn.addEventListener('click', async () => {
+      try {
+        const res = await fetch('/grievance/check-escalations', { method: 'POST' });
+        if (!res.ok) throw new Error("Escalation check failed");
+        const data = await res.json();
+        showToast(`SLA Check Complete: ${data.escalated_count} ticket(s) escalated to Senior Officer. Webhook dispatched.`, false);
+        loadGrievances();
+      } catch (e) {
+        showToast(e.message, true);
+      }
+    });
+  }
+
+  if (refreshGrievancesBtn) {
+    refreshGrievancesBtn.addEventListener('click', loadGrievances);
+  }
+
+  // =========================================================
+  // Feature 7: Try Before You Apply (Anonymous Sandbox)
+  // =========================================================
+  let anonTermMonths = 48;
+  const anonLoanRange = document.getElementById('anonLoanRange');
+  const anonIncomeRange = document.getElementById('anonIncomeRange');
+  const anonRateRange = document.getElementById('anonRateRange');
+
+  let _anonDebounce = null;
+
+  async function updateAnonSim() {
+    if (!anonLoanRange || !anonIncomeRange || !anonRateRange) return;
+
+    const principal = parseFloat(anonLoanRange.value) || 20000;
+    const income = parseFloat(anonIncomeRange.value) || 80000;
+    const rate = parseFloat(anonRateRange.value) || 7.5;
+    const term = anonTermMonths;
+
+    document.getElementById('anonLoanVal').textContent = '₹' + Math.round(principal).toLocaleString('en-IN');
+    document.getElementById('anonIncomeVal').textContent = '₹' + Math.round(income).toLocaleString('en-IN');
+    document.getElementById('anonRateVal').textContent = rate.toFixed(2) + '%';
+    document.getElementById('anonTermVal').textContent = `${term} Months (${(term/12).toFixed(1)} Yrs)`;
+
+    clearTimeout(_anonDebounce);
+    _anonDebounce = setTimeout(async () => {
+      try {
+        const res = await fetch('/simulate/anonymous', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            loan_amount: principal,
+            annual_income: income,
+            person_income: income,
+            loan_int_rate: rate,
+            term_months: term,
+            loan_term_months: term
+          })
+        });
+
+        if (res.status === 429) {
+          showToast('Hourly limit of 10 anonymous checks reached. Please sign in to continue.', true);
+          document.getElementById('anonRateLimitVal').textContent = '0/10 (Limit Exceeded)';
+          return;
+        }
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const emiVal = data.monthly_emi || data.emi || 0;
+        const dtiVal = data.dti_ratio !== undefined ? data.dti_ratio : (data.dti || 0);
+
+        document.getElementById('anonKpiEmi').textContent = '₹' + Math.round(emiVal).toLocaleString('en-IN');
+        document.getElementById('anonKpiDti').textContent = Number(dtiVal).toFixed(1) + '%';
+        document.getElementById('anonKpiInterest').textContent = '₹' + Math.round(data.total_interest || 0).toLocaleString('en-IN');
+        if (data.rate_limit_remaining !== undefined) {
+          document.getElementById('anonRateLimitVal').textContent = `${data.rate_limit_remaining} / 10`;
+        }
+
+        const pill = document.getElementById('anonHealthPill');
+        if (pill) {
+          if (dtiVal <= 28) {
+            pill.className = 'health-pill emerald';
+            pill.textContent = 'Optimal (Affordable)';
+          } else if (dtiVal <= 38) {
+            pill.className = 'health-pill amber';
+            pill.textContent = 'Moderate (Acceptable)';
+          } else {
+            pill.className = 'health-pill rose';
+            pill.textContent = 'Strained (High Debt Risk)';
+          }
+        }
+
+        // Favorable message banner
+        const banner = document.getElementById('anonEligibilityBanner');
+        const msgEl = document.getElementById('anonEligibilityMsg');
+        if (banner && msgEl) {
+          msgEl.textContent = data.favorable_message || data.eligibility_message || "Your simulated profile meets the current eligibility criteria.";
+          if (data.is_favorable) {
+            banner.style.display = 'block';
+            banner.style.background = 'rgba(16, 185, 129, 0.08)';
+            banner.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+            msgEl.style.color = '#059669';
+          } else {
+            banner.style.display = 'block';
+            banner.style.background = 'rgba(239, 68, 68, 0.08)';
+            banner.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            msgEl.style.color = '#DC2626';
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }, 200);
+  }
+
+  if (anonLoanRange) anonLoanRange.addEventListener('input', updateAnonSim);
+  if (anonIncomeRange) anonIncomeRange.addEventListener('input', updateAnonSim);
+  if (anonRateRange) anonRateRange.addEventListener('input', updateAnonSim);
+
+  document.querySelectorAll('#anonTermBtnGroup .term-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#anonTermBtnGroup .term-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      anonTermMonths = parseInt(btn.getAttribute('data-term'), 10) || 48;
+      updateAnonSim();
+    });
+  });
+
+  const anonStartAppBtn = document.getElementById('anonStartAppBtn');
+  if (anonStartAppBtn) {
+    anonStartAppBtn.addEventListener('click', () => {
+      const principal = parseFloat(anonLoanRange.value);
+      const income = parseFloat(anonIncomeRange.value);
+      const rate = parseFloat(anonRateRange.value);
+      const ratio = principal / income;
+
+      if (fields.income) fields.income.value = income;
+      if (fields.rate) fields.rate.value = rate;
+      if (fields.percent) fields.percent.value = ratio.toFixed(2);
+
+      updateSignals();
+      updateLiveHeuristics();
+      switchTab('form');
+      showToast('Simulated parameters transferred to application form!', false);
+      if (!currentUser) {
+        loginOverlay.style.opacity = '1';
+        loginOverlay.style.visibility = 'visible';
+      }
+    });
+  }
 
   // ---- Loan Scenario Simulator Engine ----
   let simTermMonths = 60;

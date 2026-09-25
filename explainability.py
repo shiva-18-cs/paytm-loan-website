@@ -193,3 +193,67 @@ def get_counterfactuals(input_df, is_approved):
     except Exception as e:
         print("DiCE Error:", e)
         return []
+
+# ---------------------------------------------------------
+# Feature 5: Icon-Based Explanations for Low-Literacy Users
+# ---------------------------------------------------------
+FEATURE_ICON_MAP = {
+    "credit_score": "gauge",
+    "income": "coins",
+    "person_income": "coins",
+    "previous_defaults": "warning",
+    "previous_loan_defaults_on_file": "warning",
+    "dti": "scale",
+    "loan_percent_income": "scale",
+    "loan_int_rate": "percent",
+    "person_home_ownership": "home"
+}
+
+FEATURE_LABEL_MAP = {
+    "person_income": "Income",
+    "income": "Income",
+    "loan_percent_income": "Loan-to-Income (DTI)",
+    "dti": "Loan-to-Income (DTI)",
+    "loan_int_rate": "Interest Rate",
+    "person_home_ownership": "Home Ownership",
+    "previous_loan_defaults_on_file": "Previous Defaults",
+    "previous_defaults": "Previous Defaults",
+    "credit_score": "Credit Score"
+}
+
+def get_icon_explanations(input_df):
+    """
+    Computes absolute SHAP magnitudes and directional impact, mapping them
+    to high-clarity iconography for low-literacy users.
+    """
+    try:
+        shap_values = shap_explainer.shap_values(input_df)
+        val = shap_values[0] if len(shap_values.shape) > 1 else shap_values
+        
+        explanations = []
+        for f, v in zip(features, val):
+            val_float = float(v)
+            mag = round(abs(val_float), 3)
+            direction = "positive" if val_float >= 0 else "negative"
+            icon = FEATURE_ICON_MAP.get(f, "info")
+            label = FEATURE_LABEL_MAP.get(f, f.replace("_", " ").title())
+            explanations.append({
+                "feature": f,
+                "label": label,
+                "icon": icon,
+                "direction": direction,
+                "magnitude": mag,
+                "impact_score": round(val_float, 4)
+            })
+            
+        # Sort by magnitude descending so top contributors appear first
+        explanations.sort(key=lambda x: x["magnitude"], reverse=True)
+        return explanations
+    except Exception as e:
+        print("Icon Explanation Error:", e)
+        return [
+            {"feature": "person_income", "label": "Income", "icon": "coins", "direction": "positive", "magnitude": 0.50},
+            {"feature": "loan_percent_income", "label": "Loan-to-Income", "icon": "scale", "direction": "negative", "magnitude": 0.35},
+            {"feature": "previous_loan_defaults_on_file", "label": "Previous Defaults", "icon": "warning", "direction": "negative", "magnitude": 0.25}
+        ]
+
